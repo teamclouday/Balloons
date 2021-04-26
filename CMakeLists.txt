@@ -15,6 +15,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin")
 endif(MSVC)
 
+# set preference for linux
+if(UNIX)
+    set(OpenGL_GL_PREFERENCE "LEGACY")
+endif(UNIX)
+
 # configure GLUT
 option(FREEGLUT_BUILD_DEMOS "Controls whether the demos are built or not" OFF)
 option(FREEGLUT_BUILD_SHARED_LIBS "Build freeglut as a shared library" OFF)
