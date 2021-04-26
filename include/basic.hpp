@@ -1,7 +1,8 @@
 // This header file declares most functions used in main.cpp
 #pragma once
 
-#include "GL/freeglut.h"
+#include <GL/freeglut.h>
+#include "engine.hpp"
 
 // setup OpenGL features, as well as loading all objects
 void setup();
