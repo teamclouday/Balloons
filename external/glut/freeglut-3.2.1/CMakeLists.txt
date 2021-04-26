@@ -302,7 +302,7 @@ IF(WIN32)
 ENDIF()
 
 IF(CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fcommon")
   IF(NOT(ANDROID OR BLACKBERRY OR FREEGLUT_WAYLAND))
     # not setting -ansi as EGL/KHR headers doesn't support it
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic")
@@ -324,6 +324,9 @@ IF(UNIX AND NOT(ANDROID OR BLACKBERRY OR FREEGLUT_WAYLAND))
     ENDIF()
     IF(X11_Xinput_FOUND)
         # Needed for multi-touch:
+        if(POLICY CMP0075)
+	        cmake_policy(SET CMP0075 NEW)
+        endif()
         CHECK_INCLUDE_FILES("${X11_Xinput_INCLUDE_PATH}/X11/extensions/XInput2.h" HAVE_X11_EXTENSIONS_XINPUT2_H)
         LIST(APPEND LIBS ${X11_Xinput_LIB})
     ELSE()
