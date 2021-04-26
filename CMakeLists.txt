@@ -21,6 +21,27 @@ option(FREEGLUT_BUILD_SHARED_LIBS "Build freeglut as a shared library" OFF)
 option(FREEGLUT_BUILD_STATIC_LIBS "Build freeglut as a static library" ON)
 add_subdirectory("${CMAKE_SOURCE_DIR}/external/glut/freeglut-3.2.1")
 
+# configure irrklang
+if(WIN32)
+    if(MSVC)
+        file(GLOB irrklangLIB "${CMAKE_SOURCE_DIR}/external/irrklang/irrKlang-1.6.0/bin/win32-visualStudio/*.dll")
+        file(COPY ${irrklangLIB} DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+    else()
+        file(GLOB irrklangLIB "${CMAKE_SOURCE_DIR}/external/irrklang/irrKlang-1.6.0/bin/win32-gcc/*.dll")
+        file(COPY ${irrklangLIB} DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+    endif()
+elseif(UNIX)
+    if(APPLE)
+        file(GLOB irrklangLIB "${CMAKE_SOURCE_DIR}/external/irrklang/irrKlang-1.6.0/bin/macosx-gcc/*.dylib")
+        file(COPY ${irrklangLIB} DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+    else()
+        file(GLOB irrklangLIB "${CMAKE_SOURCE_DIR}/external/irrklang/irrKlang-1.6.0/bin/linux-gcc/*.so")
+        file(COPY ${irrklangLIB} DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+    endif()
+else()
+    message("Unsupported system (not Windows, Linux or MacOS)" FATAL_ERROR)
+endif()
+
 # configure OpenGL
 find_package(OpenGL REQUIRED)
 
@@ -33,6 +54,7 @@ target_include_directories(balloon PRIVATE
     "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_SOURCE_DIR}/external/glut/freeglut-3.2.1/include"
     "${CMAKE_SOURCE_DIR}/external/glm/glm"
+    "${CMAKE_SOURCE_DIR}/external/irrklang/irrKlang-1.6.0/include"
 )
 
 target_link_libraries(balloon
