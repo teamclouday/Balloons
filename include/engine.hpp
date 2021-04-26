@@ -10,8 +10,13 @@ public:
     ~GameEngine();
     static GameEngine* instance();
     void setup();
+    void renderGame();
+    void renderInterface();
+    void updateLogics(int frameNum);
+    void updateWindowSize(int w, int h);
     void handleKeyboard(unsigned char key);
 
+    int fps = 60;
 
 private:
     void enterViewControl();

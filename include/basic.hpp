@@ -4,8 +4,8 @@
 #include <GL/freeglut.h>
 #include "engine.hpp"
 
-// setup OpenGL features, as well as loading all objects
-void setup();
+// reshape window
+void reshape(int w, int h);
 // render a frame
 void renderScene();
 // fps control and logic updates

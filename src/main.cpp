@@ -7,9 +7,12 @@ int main(int argc, char** argv)
     glutInitWindowSize(600, 600);
     glutInitWindowPosition(100, 100);
     glutCreateWindow("Balloon Shooter");
-    setup();
+    // first time init game engine object
+    auto engine = GameEngine::instance();
+    engine->setup();
     glutDisplayFunc(renderScene);
     glutKeyboardFunc(handleKeyboard);
+    glutReshapeFunc(reshape);
     glutTimerFunc(1, update, 1);
     glutMainLoop();
     return 0;
