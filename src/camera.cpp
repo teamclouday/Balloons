@@ -24,6 +24,6 @@ void Camera::update()
         std::sin(glm::radians(yaw)) * std::cos(glm::radians(pitch))
     };
     dir = glm::normalize(newdir);
-    glm::vec3 right = glm::cross(dir, worldUP);
-    up = glm::cross(right, dir);
+    glm::vec3 right = glm::normalize(glm::cross(dir, worldUP));
+    up = glm::normalize(glm::cross(right, dir));
 }
