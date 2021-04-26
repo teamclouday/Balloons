@@ -32,6 +32,7 @@ add_executable(balloon ${SRC_FILES})
 target_include_directories(balloon PRIVATE
     "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_SOURCE_DIR}/external/glut/freeglut-3.2.1/include"
+    "${CMAKE_SOURCE_DIR}/external/glm/glm"
 )
 
 target_link_libraries(balloon
