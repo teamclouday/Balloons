@@ -3,6 +3,8 @@
 
 #include "camera.hpp"
 
+#include <string>
+#include <vector>
 class GameEngine
 {
 public:
@@ -25,4 +27,5 @@ private:
     Camera* camera;
     int winW, winH;
     bool viewControl;
+    std::vector<std::string> helpMessage;
 };
