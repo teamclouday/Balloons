@@ -12,3 +12,7 @@ void renderScene();
 void update(int value);
 // handle keyboard inputs
 void handleKeyboard(unsigned char key, int x, int y);
+// handle mouse click
+void handleMouseClick(int button, int state, int x, int y);
+// handle mouse motion
+void handleMouseMotion(int x, int y);

@@ -14,7 +14,7 @@ void renderScene()
 
     auto engine = GameEngine::instance();
     engine->renderGame();
-    engine->renderInterface();
+    // engine->renderInterface();
 
     glutSwapBuffers();
 }
@@ -37,12 +37,26 @@ void update(int value)
 void handleKeyboard(unsigned char key, int x, int y)
 {
     auto engine = GameEngine::instance();
-    switch(key)
-    {
-        case 27:
-            exit(0);
-            break;
-        default: break;
-    }
     engine->handleKeyboard(key);
+}
+
+void handleMouseClick(int button, int state, int x, int y)
+{
+    auto engine = GameEngine::instance();
+    if(button == GLUT_LEFT_BUTTON)
+    {
+        if(state == GLUT_UP) engine->handleMouseClick(false, true);
+        else if(state == GLUT_DOWN) engine->handleMouseClick(true, true);
+    }
+    else if(button == GLUT_RIGHT_BUTTON)
+    {
+        if(state == GLUT_UP) engine->handleMouseClick(false, false);
+        else if(state == GLUT_DOWN) engine->handleMouseClick(true, false);
+    }
+}
+
+void handleMouseMotion(int x, int y)
+{
+    auto engine = GameEngine::instance();
+    engine->handleMouseMotion(x, y);
 }

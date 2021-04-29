@@ -13,6 +13,8 @@ int main(int argc, char** argv)
     glutDisplayFunc(renderScene);
     glutKeyboardFunc(handleKeyboard);
     glutReshapeFunc(reshape);
+    glutMouseFunc(handleMouseClick);
+    glutPassiveMotionFunc(handleMouseMotion);
     glutTimerFunc(1, update, 1);
     glutMainLoop();
     return 0;

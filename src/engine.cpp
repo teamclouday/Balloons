@@ -1,5 +1,7 @@
 #include "engine.hpp"
 #include <GL/freeglut.h>
+#include <cstdlib>
+#include <ctime>
 
 GameEngine::GameEngine()
 {
@@ -18,6 +20,7 @@ GameEngine::~GameEngine()
 // setup every objects
 void GameEngine::setup()
 {
+    // setup OpenGL features
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
@@ -27,7 +30,32 @@ void GameEngine::setup()
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
+    const float matSpec[]{1.0f, 1.0f, 1.0f, 1.0f};
+    const float globAmb[]{0.2f, 0.2f, 0.2f, 1.0f};
+    const float matShine[]{50.0f};
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpec);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShine);
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb);
 
+    // setup lights
+    const float colorAmbient[]{0.0f, 0.0f, 0.0f, 0.0f};
+    const float colorWhiteLight[]{0.8f, 0.8f, 0.8f, 1.0f};
+    const float posLight0[]{0.0f, 95.0f, 0.0f, 1.0f};
+    glEnable(GL_LIGHT0); // light0 is above the head of the camera
+    glLightfv(GL_LIGHT0, GL_AMBIENT, colorAmbient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, colorWhiteLight);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, colorWhiteLight);
+    glLightfv(GL_LIGHT0, GL_POSITION, posLight0);
+
+    // setup camera
+    camera->pos = glm::vec3(0.0f, 20.0f, 0.0f);
+    camera->worldUP = glm::vec3(0.0f, 1.0f, 0.0f);
+    camera->pitch = 0.0f;
+    camera->yaw = -90.0f;
+    camera->rotVel = 1.0f / fps * 5.0f;
+    camera->update();
+
+    srand(time(0));
 }
 
 GameEngine* GameEngine::instance()
@@ -40,6 +68,8 @@ void GameEngine::enterViewControl()
 {
     viewControl = true;
     glutSetCursor(GLUT_CURSOR_NONE);
+    // wrap cursor to the center
+    glutWarpPointer(winW/2, winH/2);
 }
 
 void GameEngine::exitViewControl()
@@ -50,6 +80,29 @@ void GameEngine::exitViewControl()
 
 void GameEngine::updateLogics(int frameNum)
 {
+    // update help messages
+    auto textIter = helpMessage.begin();
+    while(textIter != helpMessage.end())
+    {
+        auto nextIter = textIter + 1;
+        textIter->second--;
+        if(textIter->second < 0) helpMessage.erase(textIter);
+        textIter = nextIter;
+    }
+    // update cursor information
+    if(viewControl)
+    {
+        int deltaX = mouseX - winW/2;
+        int deltaY = mouseY - winH/2;
+        camera->changeView(deltaX, deltaY);
+        camera->update();
+        glutWarpPointer(winW/2, winH/2);
+        mouseX = winW/2;
+        mouseY = winH/2;
+        std::cout << camera->pitch << std::endl;
+    }
+
+
 
 }
 
@@ -68,6 +121,8 @@ void GameEngine::renderGame()
         camera->up.x, camera->up.y, camera->up.z
     );
 
+    // render every objects
+    renderEnv();
 }
 
 void GameEngine::renderInterface()
@@ -82,6 +137,7 @@ void GameEngine::renderInterface()
     if(helpMessage.size() > 0)
     {
         int length = helpMessage.size();
+        int lineCounter = 0;
         glPushMatrix();
         glTranslatef(0.0f, winH / 2.0f - 50.0f, 0.0f);
         glColor3f(0.2f, 0.2f, 0.2f);
@@ -94,7 +150,7 @@ void GameEngine::renderInterface()
         glPopMatrix();
         for(unsigned i = 0; i < helpMessage.size(); i++)
         {
-            auto text = helpMessage[i];
+            auto text = helpMessage[i].first;
             glPushMatrix();
             glPushAttrib(GL_CURRENT_BIT);
             glColor3f(1.0f, 1.0f, 1.0f);
@@ -117,5 +173,46 @@ void GameEngine::updateWindowSize(int w, int h)
 
 void GameEngine::handleKeyboard(unsigned char key)
 {
+    switch(key)
+    {
+        case 27:
+        {
+            if(viewControl)
+            {
+                exitViewControl();
+                addHelpMessage("You have exit control mode, press ESC again to quit", 5 * fps);
+            }
+            else
+                exit(0);
+            break;
+        }
+        case ' ':
+        {
+            if(!viewControl)
+            {
+                enterViewControl();
+                addHelpMessage("You have entered control mode, press ESC to exit", 5 * fps);
+            }
+            break;
+        }
+        default: break;
+    }
+}
 
+void GameEngine::handleMouseClick(bool isDown, bool isLeft)
+{
+    if(!viewControl) return;
+
+}
+
+void GameEngine::handleMouseMotion(int x, int y)
+{
+    if(!viewControl) return;
+    mouseX = x;
+    mouseY = y;
+}
+
+void GameEngine::addHelpMessage(const std::string message, unsigned timeout)
+{
+    helpMessage.push_back(std::make_pair(message, timeout));
 }

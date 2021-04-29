@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 class GameEngine
 {
 public:
@@ -17,15 +18,23 @@ public:
     void updateLogics(int frameNum);
     void updateWindowSize(int w, int h);
     void handleKeyboard(unsigned char key);
+    void handleMouseClick(bool isDown, bool isLeft);
+    void handleMouseMotion(int x, int y);
 
     int fps = 60;
 
 private:
+    void addHelpMessage(const std::string message, unsigned timeout);
     void enterViewControl();
     void exitViewControl();
 
     Camera* camera;
     int winW, winH;
+    int mouseX, mouseY;
     bool viewControl;
-    std::vector<std::string> helpMessage;
+    std::vector<std::pair<std::string, unsigned>> helpMessage;
+
+private:
+    // rendering functions
+    void renderEnv();
 };
