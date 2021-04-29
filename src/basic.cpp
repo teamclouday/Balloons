@@ -9,12 +9,12 @@ void reshape(int w, int h)
 
 void renderScene()
 {
-    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+    glClearColor(91.0f/255.0f, 230.0f/255.0f, 235.0f/255.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto engine = GameEngine::instance();
     engine->renderGame();
-    // engine->renderInterface();
+    engine->renderInterface();
 
     glutSwapBuffers();
 }
@@ -29,9 +29,9 @@ void update(int value)
     if(value > engine->fps) value = 0;
 
     auto tEnd = std::chrono::high_resolution_clock::now();
-    float timeInterval = std::chrono::duration_cast<std::chrono::milliseconds>(tEnd - tStart).count();
-    float waitInterval = 1.0f / engine->fps * 1000.0f - timeInterval;
-    glutTimerFunc((waitInterval > 1) ? static_cast<unsigned int>(waitInterval) : 1, update, value+1);
+    unsigned timeInterval = std::chrono::duration_cast<std::chrono::milliseconds>(tEnd - tStart).count();
+    unsigned waitInterval = static_cast<unsigned>(1.0f / engine->fps * 1000.0f) - timeInterval;
+    glutTimerFunc((waitInterval > 1) ? waitInterval : 1, update, value+1);
 }
 
 void handleKeyboard(unsigned char key, int x, int y)

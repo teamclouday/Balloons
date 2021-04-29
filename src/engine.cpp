@@ -40,8 +40,8 @@ void GameEngine::setup()
     // setup lights
     const float colorAmbient[]{0.0f, 0.0f, 0.0f, 0.0f};
     const float colorWhiteLight[]{0.8f, 0.8f, 0.8f, 1.0f};
-    const float posLight0[]{0.0f, 95.0f, 0.0f, 1.0f};
-    glEnable(GL_LIGHT0); // light0 is above the head of the camera
+    const float posLight0[]{0.0f, 500.0f, 0.0f, 1.0f};
+    glEnable(GL_LIGHT0); // light0 is the directional light for the sun
     glLightfv(GL_LIGHT0, GL_AMBIENT, colorAmbient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, colorWhiteLight);
     glLightfv(GL_LIGHT0, GL_SPECULAR, colorWhiteLight);
@@ -52,8 +52,12 @@ void GameEngine::setup()
     camera->worldUP = glm::vec3(0.0f, 1.0f, 0.0f);
     camera->pitch = 0.0f;
     camera->yaw = -90.0f;
-    camera->rotVel = 1.0f / fps * 5.0f;
+    camera->rotVel = 1.0f / fps * 4.0f;
     camera->update();
+
+    // setup starting help messages
+    addHelpMessage("Fullscreen view is recommended", 5 * fps);
+    addHelpMessage("Press SPACE to enter view control mode", 8 * fps);
 
     srand(time(0));
 }
@@ -84,10 +88,10 @@ void GameEngine::updateLogics(int frameNum)
     auto textIter = helpMessage.begin();
     while(textIter != helpMessage.end())
     {
-        auto nextIter = textIter + 1;
         textIter->second--;
-        if(textIter->second < 0) helpMessage.erase(textIter);
-        textIter = nextIter;
+        if (textIter->second < 0)
+            textIter = helpMessage.erase(textIter);
+        else textIter++;
     }
     // update cursor information
     if(viewControl)
@@ -99,7 +103,6 @@ void GameEngine::updateLogics(int frameNum)
         glutWarpPointer(winW/2, winH/2);
         mouseX = winW/2;
         mouseY = winH/2;
-        std::cout << camera->pitch << std::endl;
     }
 
 
@@ -128,40 +131,66 @@ void GameEngine::renderGame()
 void GameEngine::renderInterface()
 {
     glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-winW/2.0f, winW/2.0f, -winH/2.0f, winH/2.0f, -1.0f, 1.0f);
+    glOrtho(0.0f, winW, 0.0f, winH, -1.0f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     if(helpMessage.size() > 0)
     {
-        int length = helpMessage.size();
         int lineCounter = 0;
-        glPushMatrix();
-        glTranslatef(0.0f, winH / 2.0f - 50.0f, 0.0f);
-        glColor3f(0.2f, 0.2f, 0.2f);
-        glBegin(GL_QUADS);
-        glVertex2f(length / 2.0f * 10.0f, 15.0f);
-        glVertex2f(-length / 2.0f * 10.0f, 15.0f);
-        glVertex2f(-length / 2.0f * 10.0f, -5.0f);
-        glVertex2f(length / 2.0f * 10.0f, -5.0f);
-        glEnd();
-        glPopMatrix();
-        for(unsigned i = 0; i < helpMessage.size(); i++)
+        int charCounter = 0;
+        const int maxCharInLine = 45;
+        glPushAttrib(GL_CURRENT_BIT);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        for(auto& message : helpMessage)
         {
-            auto text = helpMessage[i].first;
-            glPushMatrix();
-            glPushAttrib(GL_CURRENT_BIT);
-            glColor3f(1.0f, 1.0f, 1.0f);
-            glRasterPos2f(-length / 2.0f * 9.0f, 0.0f);
-            for(char& c : text) glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
-            glPopAttrib();
-            glPopMatrix();
+            lineCounter++;
+            charCounter = 0;
+            glRasterPos3f(10.0f, winH - lineCounter * 20.0f, 0.5f);
+            for(char& ch : message.first)
+            {
+                charCounter++;
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ch);
+                if(charCounter > maxCharInLine) 
+                {
+                    lineCounter++;
+                    glRasterPos3f(10.0f, winH - lineCounter * 20.0f, 0.5f);
+                    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, '-');
+                    charCounter = 0;
+                }
+            }
         }
+        glPopAttrib();
+        // next draw background with some transparency
+        glColor4f(0.2f, 0.2f, 0.2f, 0.8f);
+        glBegin(GL_QUADS);
+            glVertex3f(5.0f, winH - 5.0f, -0.5f);
+            glVertex3f(5.0f, winH - lineCounter * 20.0f - 5.0f, -0.5f);
+            glVertex3f(10.0f + 10.0f * (maxCharInLine - 1), winH - lineCounter * 20.0f - 5.0f, -0.5f);
+            glVertex3f(10.0f + 10.0f * (maxCharInLine - 1), winH - 5.0f, -0.5f);
+        glEnd();
     }
-    glEnable(GL_LIGHTING);
+    // next render center crosshair
+    glDisable(GL_DEPTH_TEST);
+    glLineWidth(5.0f);
+    glColor3f(28.0f/255.0f, 61.0f/255.0f, 29.0f/255.0f);
+    glBegin(GL_LINES);
+        glVertex2f(winW/2.0f-15.0f, winH/2.0f);
+        glVertex2f(winW/2.0f+15.0f, winH/2.0f);
+        glVertex2f(winW/2.0f, winH/2.0f-15.0f);
+        glVertex2f(winW/2.0f, winH/2.0f+15.0f);
+    glEnd();
+    glLineWidth(3.0f);
+    glColor3f(4.0f/255.0f, 209.0f/255.0f, 8.0f/255.0f);
+    glBegin(GL_LINES);
+        glVertex2f(winW/2.0f-14.0f, winH/2.0f);
+        glVertex2f(winW/2.0f+14.0f, winH/2.0f);
+        glVertex2f(winW/2.0f, winH/2.0f-14.0f);
+        glVertex2f(winW/2.0f, winH/2.0f+14.0f);
+    glEnd();
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
 }
 
 void GameEngine::updateWindowSize(int w, int h)
@@ -212,7 +241,7 @@ void GameEngine::handleMouseMotion(int x, int y)
     mouseY = y;
 }
 
-void GameEngine::addHelpMessage(const std::string message, unsigned timeout)
+void GameEngine::addHelpMessage(const std::string message, int timeout)
 {
     helpMessage.push_back(std::make_pair(message, timeout));
 }

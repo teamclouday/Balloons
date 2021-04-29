@@ -24,7 +24,7 @@ public:
     int fps = 60;
 
 private:
-    void addHelpMessage(const std::string message, unsigned timeout);
+    void addHelpMessage(const std::string message, int timeout);
     void enterViewControl();
     void exitViewControl();
 
@@ -32,7 +32,7 @@ private:
     int winW, winH;
     int mouseX, mouseY;
     bool viewControl;
-    std::vector<std::pair<std::string, unsigned>> helpMessage;
+    std::vector<std::pair<std::string, int>> helpMessage;
 
 private:
     // rendering functions

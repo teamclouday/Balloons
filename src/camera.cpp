@@ -23,9 +23,7 @@ void Camera::update()
 
 void Camera::changeView(int deltaX, int deltaY)
 {
-    deltaX *= rotVel;
-    deltaY *= rotVel;
-    yaw += deltaX;
-    pitch -= deltaY;
+    yaw += deltaX * rotVel;
+    pitch -= deltaY * rotVel;
     pitch = std::max(std::min(pitch, 89.0f), -89.0f);
 }
