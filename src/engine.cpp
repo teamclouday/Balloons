@@ -2,6 +2,7 @@
 #include <GL/freeglut.h>
 #include <cstdlib>
 #include <ctime>
+#include <sstream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -13,12 +14,14 @@ GameEngine::GameEngine()
     viewControl = false; // whether to control the view with cursor
     helpMessage.resize(0); // The help message on the upper left corner of the screen
     camera = new Camera(); // init camera object
+    audioEngine = irrklang::createIrrKlangDevice(); // init irrklang audio engine
 }
 
 GameEngine::~GameEngine()
 {
     if(camera) delete camera;
     for(auto& pair : textures) if(pair.second) glDeleteTextures(1, &pair.second);
+    if(audioEngine) audioEngine->drop();
 }
 
 // setup every objects
@@ -71,6 +74,9 @@ void GameEngine::setup()
     loadTextures();
     textureActiveID = 0;
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+    // setup audio engine
+    if(!audioEngine) addHelpMessage("Audio engine failed to load, no sound will be available", 5 * fps);
 
     srand(time(0));
 }
@@ -238,22 +244,24 @@ void GameEngine::handleKeyboard(unsigned char key)
             }
             break;
         }
-        case '1':
-        {
-            if(textures.size() >= 1 && textures[0].second) textureActiveID = 0;
-            break;
-        }
-        case '2':
-        {
-            if(textures.size() >= 2 && textures[1].second) textureActiveID = 1;
-            break;
-        }
-        case '3':
-        {
-            if(textures.size() >= 3 && textures[2].second) textureActiveID = 2;
-            break;
-        }
         default: break;
+    }
+    if(key >= '1' && key <= '9')
+    {
+        for(unsigned i = 0; i < textures.size(); i++)
+        {
+            if(key == '1' + static_cast<unsigned char>(i))
+            {
+                if(textures[i].second)
+                {
+                    textureActiveID = i;
+                    std::stringstream sstr;
+                    sstr << "You have switched to texture " << i + 1;
+                    addHelpMessage(sstr.str(), 5 * fps);
+                }
+                break;
+            }
+        }
     }
 }
 
@@ -294,6 +302,10 @@ void GameEngine::loadTextures()
             stbi_image_free(data);
         }
         else
-            std::cout << "Failed to load image: " << pair.first << std::endl;
+        {
+            std::stringstream sstr;
+            sstr << "Failed to load image: " << pair.first;
+            addHelpMessage(sstr.str(), 5 * fps);
+        }
     }
 }
