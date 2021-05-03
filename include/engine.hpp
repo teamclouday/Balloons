@@ -37,6 +37,10 @@ private:
     std::vector<std::pair<std::string, unsigned>> textures;
     unsigned textureActiveID;
 
+    // gun animation specific
+    float gunUpDegree = 0.0f; // range: 0.0f to 30.0f
+    unsigned short gunUpState = 0; // 0 for no move, 1 for moving up, 2 for moving down
+
 private:
     // rendering functions
     void renderEnv();

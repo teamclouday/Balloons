@@ -67,7 +67,7 @@ void GameEngine::setup()
     // load textures for gun
     textures.push_back({"assets/pexels-aleksandr-slobodianyk-989946.jpg", 0});
     textures.push_back({"assets/pexels-anni-roenkae-2832432.jpg", 0});
-    textures.push_back({"assets/pexels-steve-johnson-1704120", 0});
+    textures.push_back({"assets/pexels-steve-johnson-1704120.jpg", 0});
     loadTextures();
     textureActiveID = 0;
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -236,6 +236,21 @@ void GameEngine::handleKeyboard(unsigned char key)
                 enterViewControl();
                 addHelpMessage("You have entered control mode, press ESC to exit", 5 * fps);
             }
+            break;
+        }
+        case '1':
+        {
+            if(textures.size() >= 1 && textures[0].second) textureActiveID = 0;
+            break;
+        }
+        case '2':
+        {
+            if(textures.size() >= 2 && textures[1].second) textureActiveID = 1;
+            break;
+        }
+        case '3':
+        {
+            if(textures.size() >= 3 && textures[2].second) textureActiveID = 2;
             break;
         }
         default: break;

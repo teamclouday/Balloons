@@ -58,20 +58,59 @@ void GameEngine::renderEnv()
 
 void GameEngine::renderGun()
 {
+    auto gunPos = camera->pos + 8.0f * camera->dir + 2.5f * camera->right - 2.5f * camera->up;
+    glPushMatrix();
+    glTranslatef(gunPos.x, gunPos.y, gunPos.z);
+    glScalef(0.25f, 0.25f, 0.25f);
+    glRotatef(camera->yaw + 90.0f, 0.0f, -1.0f, 0.0f);
+    glRotatef(camera->pitch + gunUpDegree, 1.0f, 0.0f, 0.0f);
     // select texture to bind
     if(textureActiveID < textures.size() && textures[textureActiveID].second)
         glBindTexture(GL_TEXTURE_2D, textures[textureActiveID].second);
-
-    glPushMatrix();
-    glTranslatef(0.0f, 5.0f, -20.0f);
-    glScalef(0.2f, 0.2f, 0.2f);
     glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 0.5f); glVertex3f(-5.0f, 20.0f, -15.0f);
-        glTexCoord2f(0.0f, 0.0f); glVertex3f(-5.0f, 20.0f, 15.0f);
-        glTexCoord2f(0.2f, 0.0f); glVertex3f(5.0f, 20.0f, 15.0f);
-        glTexCoord2f(0.2f, 0.5f); glVertex3f(5.0f, 20.0f, -15.0f);
+        // left side
+        glTexCoord2f(0.00f, 0.05f); glVertex3f(-2.5f, 5.0f, -10.0f);
+        glTexCoord2f(0.00f, 0.00f); glVertex3f(-2.5f, 0.0f, -10.0f);
+        glTexCoord2f(0.18f, 0.00f); glVertex3f(-2.5f, 0.0f, 8.0f);
+        glTexCoord2f(0.18f, 0.05f); glVertex3f(-2.5f, 5.0f, 8.0f);
+        // right side
+        glTexCoord2f(0.10f, 0.25f); glVertex3f(2.5f, 5.0f, 8.0f);
+        glTexCoord2f(0.10f, 0.20f); glVertex3f(2.5f, 0.0f, 8.0f);
+        glTexCoord2f(0.28f, 0.20f); glVertex3f(2.5f, 0.0f, -10.0f);
+        glTexCoord2f(0.28f, 0.25f); glVertex3f(2.5f, 5.0f, -10.0f);
+        // upper side
+        glTexCoord2f(0.40f, 0.15f); glVertex3f(2.5f, 5.0f, -10.0f);
+        glTexCoord2f(0.40f, 0.10f); glVertex3f(-2.5f, 5.0f, -10.0f);
+        glTexCoord2f(0.58f, 0.10f); glVertex3f(-2.5f, 5.0f, 8.0f);
+        glTexCoord2f(0.58f, 0.15f); glVertex3f(2.5f, 5.0f, 8.0f);
+        // back side
+        glTexCoord2f(0.60f, 0.65f); glVertex3f(-2.5f, 5.0f, 8.0f);
+        glTexCoord2f(0.60f, 0.60f); glVertex3f(-2.5f, 0.0f, 8.0f);
+        glTexCoord2f(0.65f, 0.60f); glVertex3f(2.5f, 0.0f, 8.0f);
+        glTexCoord2f(0.65f, 0.65f); glVertex3f(2.5f, 5.0f, 8.0f);
     glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0); // bind default texture
+
+    // finish other sides
+    glColor3f(0.1f, 0.1f, 0.1f);
+    glBegin(GL_QUADS);
+        glVertex3f(2.5f, 5.0f, -10.0f);
+        glVertex3f(2.5f, 0.0f, -10.0f);
+        glVertex3f(-2.5f, 0.0f, -10.0f);
+        glVertex3f(-2.5f, 5.0f, -10.0f);
+    glEnd();
+    glColor3f(0.3f, 0.3f, 0.3f);
+    glBegin(GL_QUADS);
+        glVertex3f(-2.5f, 0.0f, -10.0f);
+        glVertex3f(2.5f, 0.0f, -10.0f);
+        glVertex3f(2.5f, 0.0f, 0.0f);
+        glVertex3f(-2.5f, 0.0f, 0.0f);
+    glEnd();
+    glPushMatrix();
+    glTranslatef(0.0f, -4.0f, 4.0f);
+    glScalef(5.0f/8.0f, 1.0f, 1.0f);
+    glutSolidCube(8.0f);
     glPopMatrix();
 
-    glBindTexture(GL_TEXTURE_2D, 0); // bind default texture
+    glPopMatrix();
 }
