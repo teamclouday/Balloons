@@ -69,25 +69,25 @@ void GameEngine::renderGun()
         glBindTexture(GL_TEXTURE_2D, textures[textureActiveID].second);
     glBegin(GL_QUADS);
         // left side
-        glTexCoord2f(0.00f, 0.05f); glVertex3f(-2.5f, 5.0f, -10.0f);
+        glTexCoord2f(0.00f, 0.10f); glVertex3f(-2.5f, 5.0f, -10.0f);
         glTexCoord2f(0.00f, 0.00f); glVertex3f(-2.5f, 0.0f, -10.0f);
-        glTexCoord2f(0.18f, 0.00f); glVertex3f(-2.5f, 0.0f, 8.0f);
-        glTexCoord2f(0.18f, 0.05f); glVertex3f(-2.5f, 5.0f, 8.0f);
+        glTexCoord2f(0.36f, 0.00f); glVertex3f(-2.5f, 0.0f, 8.0f);
+        glTexCoord2f(0.36f, 0.10f); glVertex3f(-2.5f, 5.0f, 8.0f);
         // right side
-        glTexCoord2f(0.10f, 0.25f); glVertex3f(2.5f, 5.0f, 8.0f);
+        glTexCoord2f(0.10f, 0.30f); glVertex3f(2.5f, 5.0f, 8.0f);
         glTexCoord2f(0.10f, 0.20f); glVertex3f(2.5f, 0.0f, 8.0f);
-        glTexCoord2f(0.28f, 0.20f); glVertex3f(2.5f, 0.0f, -10.0f);
-        glTexCoord2f(0.28f, 0.25f); glVertex3f(2.5f, 5.0f, -10.0f);
+        glTexCoord2f(0.46f, 0.20f); glVertex3f(2.5f, 0.0f, -10.0f);
+        glTexCoord2f(0.46f, 0.30f); glVertex3f(2.5f, 5.0f, -10.0f);
         // upper side
-        glTexCoord2f(0.40f, 0.15f); glVertex3f(2.5f, 5.0f, -10.0f);
+        glTexCoord2f(0.40f, 0.20f); glVertex3f(2.5f, 5.0f, -10.0f);
         glTexCoord2f(0.40f, 0.10f); glVertex3f(-2.5f, 5.0f, -10.0f);
-        glTexCoord2f(0.58f, 0.10f); glVertex3f(-2.5f, 5.0f, 8.0f);
-        glTexCoord2f(0.58f, 0.15f); glVertex3f(2.5f, 5.0f, 8.0f);
+        glTexCoord2f(0.76f, 0.10f); glVertex3f(-2.5f, 5.0f, 8.0f);
+        glTexCoord2f(0.76f, 0.20f); glVertex3f(2.5f, 5.0f, 8.0f);
         // back side
-        glTexCoord2f(0.60f, 0.65f); glVertex3f(-2.5f, 5.0f, 8.0f);
+        glTexCoord2f(0.60f, 0.70f); glVertex3f(-2.5f, 5.0f, 8.0f);
         glTexCoord2f(0.60f, 0.60f); glVertex3f(-2.5f, 0.0f, 8.0f);
-        glTexCoord2f(0.65f, 0.60f); glVertex3f(2.5f, 0.0f, 8.0f);
-        glTexCoord2f(0.65f, 0.65f); glVertex3f(2.5f, 5.0f, 8.0f);
+        glTexCoord2f(0.96f, 0.60f); glVertex3f(2.5f, 0.0f, 8.0f);
+        glTexCoord2f(0.96f, 0.70f); glVertex3f(2.5f, 5.0f, 8.0f);
     glEnd();
     glBindTexture(GL_TEXTURE_2D, 0); // bind default texture
 

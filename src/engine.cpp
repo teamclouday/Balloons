@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
+#include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -70,13 +71,19 @@ void GameEngine::setup()
     // load textures for gun
     textures.push_back({"assets/pexels-aleksandr-slobodianyk-989946.jpg", 0});
     textures.push_back({"assets/pexels-anni-roenkae-2832432.jpg", 0});
-    textures.push_back({"assets/pexels-steve-johnson-1704120.jpg", 0});
+    textures.push_back({"assets/pawel-czerwinski-gKUqBsolYq0-unsplash.jpg", 0});
+    textures.push_back({"assets/christian-holzinger-CUY_YHhCFl4-unsplash.jpg", 0});
+    textures.push_back({"assets/lucas-benjamin-wQLAGv4_OYs-unsplash.jpg", 0});
     loadTextures();
     textureActiveID = 0;
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     // setup audio engine
-    if(!audioEngine) addHelpMessage("Audio engine failed to load, no sound will be available", 5 * fps);
+    if(!audioEngine) 
+    {
+        addHelpMessage("Audio engine failed to load, no sound will be available", 5 * fps);
+        std::cout << "Audio engine failed to load, no sound will be available" << std::endl;
+    }
 
     srand(time(0));
 }
@@ -252,7 +259,7 @@ void GameEngine::handleKeyboard(unsigned char key)
         {
             if(key == '1' + static_cast<unsigned char>(i))
             {
-                if(textures[i].second)
+                if(textures[i].second && textureActiveID != i)
                 {
                     textureActiveID = i;
                     std::stringstream sstr;
@@ -306,6 +313,8 @@ void GameEngine::loadTextures()
             std::stringstream sstr;
             sstr << "Failed to load image: " << pair.first;
             addHelpMessage(sstr.str(), 5 * fps);
+            std::cout << "Failed to load image: " << pair.first << std::endl;
+            std::cout << "stb_image error: " << stbi_failure_reason() << std::endl;
         }
     }
 }
