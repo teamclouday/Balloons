@@ -3,6 +3,9 @@
 #include <cstdlib>
 #include <ctime>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 GameEngine::GameEngine()
 {
     winW = glutGet(GLUT_WINDOW_WIDTH); // window width
@@ -15,6 +18,7 @@ GameEngine::GameEngine()
 GameEngine::~GameEngine()
 {
     if(camera) delete camera;
+    for(auto& pair : textures) if(pair.second) glDeleteTextures(1, &pair.second);
 }
 
 // setup every objects
@@ -22,6 +26,7 @@ void GameEngine::setup()
 {
     // setup OpenGL features
     glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
@@ -58,6 +63,14 @@ void GameEngine::setup()
     // setup starting help messages
     addHelpMessage("Fullscreen view is recommended", 5 * fps);
     addHelpMessage("Press SPACE to enter view control mode", 8 * fps);
+
+    // load textures for gun
+    textures.push_back({"assets/pexels-aleksandr-slobodianyk-989946.jpg", 0});
+    textures.push_back({"assets/pexels-anni-roenkae-2832432.jpg", 0});
+    textures.push_back({"assets/pexels-steve-johnson-1704120", 0});
+    loadTextures();
+    textureActiveID = 0;
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     srand(time(0));
 }
@@ -126,6 +139,7 @@ void GameEngine::renderGame()
 
     // render every objects
     renderEnv();
+    renderGun();
 }
 
 void GameEngine::renderInterface()
@@ -244,4 +258,27 @@ void GameEngine::handleMouseMotion(int x, int y)
 void GameEngine::addHelpMessage(const std::string message, int timeout)
 {
     helpMessage.push_back(std::make_pair(message, timeout));
+}
+
+void GameEngine::loadTextures()
+{
+    int width, height, channels;
+    unsigned char* data;
+    for(auto& pair : textures)
+    {
+        data = stbi_load(pair.first.c_str(), &width, &height, &channels, STBI_rgb);
+        if(data)
+        {
+            glGenTextures(1, &pair.second);
+            glBindTexture(GL_TEXTURE_2D, pair.second);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            stbi_image_free(data);
+        }
+        else
+            std::cout << "Failed to load image: " << pair.first << std::endl;
+    }
 }

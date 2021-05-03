@@ -55,3 +55,23 @@ void GameEngine::renderEnv()
     glPopMatrix();
     glEnable(GL_LIGHTING);
 }
+
+void GameEngine::renderGun()
+{
+    // select texture to bind
+    if(textureActiveID < textures.size() && textures[textureActiveID].second)
+        glBindTexture(GL_TEXTURE_2D, textures[textureActiveID].second);
+
+    glPushMatrix();
+    glTranslatef(0.0f, 5.0f, -20.0f);
+    glScalef(0.2f, 0.2f, 0.2f);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.5f); glVertex3f(-5.0f, 20.0f, -15.0f);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-5.0f, 20.0f, 15.0f);
+        glTexCoord2f(0.2f, 0.0f); glVertex3f(5.0f, 20.0f, 15.0f);
+        glTexCoord2f(0.2f, 0.5f); glVertex3f(5.0f, 20.0f, -15.0f);
+    glEnd();
+    glPopMatrix();
+
+    glBindTexture(GL_TEXTURE_2D, 0); // bind default texture
+}

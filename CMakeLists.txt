@@ -14,6 +14,8 @@ if(MSVC)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin")
 endif(MSVC)
+# clear directory
+file(REMOVE_RECURSE "${CMAKE_SOURCE_DIR}/bin")
 
 # set preference for linux
 if(UNIX)
@@ -50,6 +52,9 @@ endif()
 # configure OpenGL
 find_package(OpenGL REQUIRED)
 
+# configure assets
+file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+
 # prepare source files
 file(GLOB SRC_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
@@ -60,6 +65,8 @@ target_include_directories(balloon PRIVATE
     "${CMAKE_SOURCE_DIR}/external/glut/freeglut-3.2.1/include"
     "${CMAKE_SOURCE_DIR}/external/glm/glm"
     "${CMAKE_SOURCE_DIR}/external/irrklang/irrKlang-1.6.0/include"
+    "${CMAKE_SOURCE_DIR}/external/tinygltf/tinygltf-2.5.0"
+    "${CMAKE_SOURCE_DIR}/external/stb"
 )
 
 target_link_libraries(balloon

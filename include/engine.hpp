@@ -27,14 +27,18 @@ private:
     void addHelpMessage(const std::string message, int timeout);
     void enterViewControl();
     void exitViewControl();
+    void loadTextures();
 
     Camera* camera;
     int winW, winH;
     int mouseX, mouseY;
     bool viewControl;
     std::vector<std::pair<std::string, int>> helpMessage;
+    std::vector<std::pair<std::string, unsigned>> textures;
+    unsigned textureActiveID;
 
 private:
     // rendering functions
     void renderEnv();
+    void renderGun();
 };
