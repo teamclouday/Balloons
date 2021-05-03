@@ -43,6 +43,7 @@ private:
 
     // audio device
     irrklang::ISoundEngine* audioEngine;
+    irrklang::ISound* musicBackground;
 
 private:
     // rendering functions

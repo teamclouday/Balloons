@@ -22,6 +22,7 @@ GameEngine::~GameEngine()
 {
     if(camera) delete camera;
     for(auto& pair : textures) if(pair.second) glDeleteTextures(1, &pair.second);
+    if(musicBackground) musicBackground->drop();
     if(audioEngine) audioEngine->drop();
 }
 
@@ -84,6 +85,8 @@ void GameEngine::setup()
         addHelpMessage("Audio engine failed to load, no sound will be available", 5 * fps);
         std::cout << "Audio engine failed to load, no sound will be available" << std::endl;
     }
+    musicBackground = audioEngine->play2D("assets/bensound-happyrock.mp3", true, false, true);
+    if(musicBackground) musicBackground->setVolume(0.4f);
 
     srand(time(0));
 }
@@ -130,8 +133,31 @@ void GameEngine::updateLogics(int frameNum)
         mouseX = winW/2;
         mouseY = winH/2;
     }
-
-
+    // update gun postion
+    switch(gunUpState)
+    {
+        case 1:
+        {
+            gunUpDegree += 5.0f;
+            if(gunUpDegree >= 30.0f)
+            {
+                gunUpDegree = 30.0f;
+                gunUpState = 2;
+            }
+            break;
+        }
+        case 2:
+        {
+            gunUpDegree -= 5.0f;
+            if(gunUpDegree <= 0.0f)
+            {
+                gunUpDegree = 0.0f;
+                gunUpState = 0;
+            }
+            break;
+        }
+        default: break;
+    }
 
 }
 
@@ -275,7 +301,12 @@ void GameEngine::handleKeyboard(unsigned char key)
 void GameEngine::handleMouseClick(bool isDown, bool isLeft)
 {
     if(!viewControl) return;
-
+    if(isLeft && isDown && gunUpDegree > 15.0f) return; // at this point, the gun is not ready to shoot
+    if(isLeft && isDown)
+    {
+        gunUpState = 1; // gun going up
+        audioEngine->play2D("assets/12-Gauge-Pump-Action-Shotgun-Close-Gunshot-A-www.fesliyanstudios.com.mp3"); // play sound effect
+    }
 }
 
 void GameEngine::handleMouseMotion(int x, int y)
