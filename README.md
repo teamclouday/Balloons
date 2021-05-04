@@ -1,5 +1,6 @@
 # Balloons
-Balloon Shooting Game (CIS425 Final Project)
+Balloon Shooting Game (CIS425 Final Project)  
+Use `glut` and outdated OpenGL because of requirements  
 
 ------
 
@@ -27,4 +28,14 @@ make
 * freeglut ([3.2.1](http://freeglut.sourceforge.net/index.php#download))  
 * glm ([0.9.9.8](https://github.com/g-truc/glm/releases/tag/0.9.9.8))  
 * irrKlang ([1.6.0](https://www.ambiera.com/irrklang/downloads.html))  
-* stb_image ([2.26](https://github.com/nothings/stb))
+* stb_image ([2.26](https://github.com/nothings/stb))  
+
+
+------
+
+### New Features Explored
+
+* textures  
+* ray tracing  
+* particle system  
+* audio  
