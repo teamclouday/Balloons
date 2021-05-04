@@ -31,7 +31,6 @@ void GameEngine::setup()
 {
     // setup OpenGL features
     glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
@@ -40,22 +39,29 @@ void GameEngine::setup()
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
-    const float matSpec[]{1.0f, 1.0f, 1.0f, 1.0f};
+    // const float matSpec[]{0.8f, 0.8f, 0.8f, 1.0f};
     const float globAmb[]{0.2f, 0.2f, 0.2f, 1.0f};
     const float matShine[]{50.0f};
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpec);
+    // glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpec);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShine);
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb);
 
     // setup lights
     const float colorAmbient[]{0.0f, 0.0f, 0.0f, 0.0f};
     const float colorWhiteLight[]{0.8f, 0.8f, 0.8f, 1.0f};
+    const float colorDarkLight[]{0.8f, 0.8f, 0.8f, 1.0f};
     const float posLight0[]{0.0f, 500.0f, 0.0f, 1.0f};
-    glEnable(GL_LIGHT0); // light0 is the directional light for the sun
+    const float posLight1[]{0.0f, 20.0f, 0.0f, 1.0f};
+    // light0 is the directional light for the sun
     glLightfv(GL_LIGHT0, GL_AMBIENT, colorAmbient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, colorWhiteLight);
     glLightfv(GL_LIGHT0, GL_SPECULAR, colorWhiteLight);
     glLightfv(GL_LIGHT0, GL_POSITION, posLight0);
+    // light1 is for better gun model view
+    glLightfv(GL_LIGHT1, GL_AMBIENT, colorAmbient);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, colorDarkLight);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, colorDarkLight);
+    glLightfv(GL_LIGHT1, GL_POSITION, posLight1);
 
     // setup camera
     camera->pos = glm::vec3(0.0f, 20.0f, 0.0f);
@@ -134,30 +140,81 @@ void GameEngine::updateLogics(int frameNum)
         mouseY = winH/2;
     }
     // update gun postion
-    switch(gunUpState)
+    switch(gunUpDegree.state)
     {
-        case 1:
+        case AnimState::FORWARD:
         {
-            gunUpDegree += 5.0f;
-            if(gunUpDegree >= 30.0f)
+            gunUpDegree.data += gunUpDegree.step;
+            if(gunUpDegree.data >= gunUpDegree.end)
             {
-                gunUpDegree = 30.0f;
-                gunUpState = 2;
+                gunUpDegree.data = gunUpDegree.end;
+                gunUpDegree.state = AnimState::BACKWARD;
             }
             break;
         }
-        case 2:
+        case AnimState::BACKWARD:
         {
-            gunUpDegree -= 5.0f;
-            if(gunUpDegree <= 0.0f)
+            gunUpDegree.data -= gunUpDegree.step;
+            if(gunUpDegree.data <= gunUpDegree.start)
             {
-                gunUpDegree = 0.0f;
-                gunUpState = 0;
+                gunUpDegree.data = gunUpDegree.start;
+                gunUpDegree.state = AnimState::DEFAULT;
             }
             break;
         }
         default: break;
     }
+    // update gun aim data
+    switch(gunAimR.state)
+    {
+        case AnimState::FORWARD:
+        {
+            gunAimR.data += gunAimR.step;
+            if(gunAimR.data >= gunAimR.end)
+            {
+                gunAimR.data = gunAimR.end;
+                gunAimR.state = AnimState::DEFAULT;
+            }
+            break;
+        }
+        case AnimState::BACKWARD:
+        {
+            gunAimR.data -= gunAimR.step;
+            if(gunAimR.data <= gunAimR.start)
+            {
+                gunAimR.data = gunAimR.start;
+                gunAimR.state = AnimState::DEFAULT;
+            }
+            break;
+        }
+        default: break;
+    }
+    switch(gunAimD.state)
+    {
+        case AnimState::FORWARD:
+        {
+            gunAimD.data += gunAimD.step;
+            if(gunAimD.data >= gunAimD.end)
+            {
+                gunAimD.data = gunAimD.end;
+                gunAimD.state = AnimState::DEFAULT;
+            }
+            break;
+        }
+        case AnimState::BACKWARD:
+        {
+            gunAimD.data -= gunAimD.step;
+            if(gunAimD.data <= gunAimD.start)
+            {
+                gunAimD.data = gunAimD.start;
+                gunAimD.state = AnimState::DEFAULT;
+            }
+            break;
+        }
+        default: break;
+    }
+    // update traced bullets
+    bullets.update();
 
 }
 
@@ -179,6 +236,7 @@ void GameEngine::renderGame()
     // render every objects
     renderEnv();
     renderGun();
+    renderBullets();
 }
 
 void GameEngine::renderInterface()
@@ -301,11 +359,39 @@ void GameEngine::handleKeyboard(unsigned char key)
 void GameEngine::handleMouseClick(bool isDown, bool isLeft)
 {
     if(!viewControl) return;
-    if(isLeft && isDown && gunUpDegree > 15.0f) return; // at this point, the gun is not ready to shoot
+    if(isLeft && isDown && gunUpDegree.data > gunUpDegree.end / 3.0f) return; // at this point, the gun is not ready to shoot
     if(isLeft && isDown)
     {
-        gunUpState = 1; // gun going up
+        gunUpDegree.state = AnimState::FORWARD; // gun going up
         audioEngine->play2D("assets/12-Gauge-Pump-Action-Shotgun-Close-Gunshot-A-www.fesliyanstudios.com.mp3"); // play sound effect
+        // trace bullet
+        float t = 0.0f;
+        auto pos = camera->pos;
+        if(gunAimR.data != gunAimR.start)
+        {
+            // add some randomness to the shot
+            pos += (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.0f - 1.0f) * 10.0f * camera->right + 
+                (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.0f - 1.0f) * 10.0f * camera->up;
+        }
+
+        if(trace(pos, camera->dir, t))
+        {
+            std::cout << "ray hit " << t << std::endl;
+            bullets.addBullet(pos + (t - 0.5f) * camera->dir, 20 * fps);
+        }
+    }
+    if(!isLeft)
+    {
+        if(isDown)
+        {
+            gunAimD.state = AnimState::BACKWARD;
+            gunAimR.state = AnimState::BACKWARD;
+        }
+        else
+        {
+            gunAimD.state = AnimState::FORWARD;
+            gunAimR.state = AnimState::FORWARD;
+        }
     }
 }
 

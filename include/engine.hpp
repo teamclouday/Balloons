@@ -2,10 +2,28 @@
 #pragma once
 
 #include "camera.hpp"
+#include "particle.hpp"
 #include <irrKlang.h>
 
 #include <string>
 #include <vector>
+
+enum AnimState
+{
+    DEFAULT  = 0,
+    FORWARD  = 1,
+    BACKWARD = 2,
+};
+
+struct AnimData
+{
+    float data; // current data
+    float start; // minimum
+    float end; // maximum
+    float step; // step
+    AnimState state;
+};
+
 class GameEngine
 {
 public:
@@ -28,6 +46,7 @@ private:
     void enterViewControl();
     void exitViewControl();
     void loadTextures();
+    bool trace(const glm::vec3& origin, const glm::vec3& dir, float& t);
 
     Camera* camera;
     int winW, winH;
@@ -38,8 +57,11 @@ private:
     unsigned textureActiveID;
 
     // gun animation specific
-    float gunUpDegree = 0.0f; // range: 0.0f to 30.0f
-    unsigned short gunUpState = 0; // 0 for no move, 1 for moving up, 2 for moving down
+    glm::vec3 gunPos;
+    AnimData gunUpDegree{0.0f, 0.0f, 30.0f, 5.0f, AnimState::DEFAULT};
+    AnimData gunAimR{2.5f, 0.0f, 2.5f, 0.5f, AnimState::DEFAULT};
+    AnimData gunAimD{8.0f, 6.0f, 8.0f, 0.4f, AnimState::DEFAULT};
+    ParticleBullet bullets;
 
     // audio device
     irrklang::ISoundEngine* audioEngine;
@@ -49,4 +71,5 @@ private:
     // rendering functions
     void renderEnv();
     void renderGun();
+    void renderBullets();
 };
