@@ -376,8 +376,9 @@ void GameEngine::handleMouseClick(bool isDown, bool isLeft)
 
         if(trace(pos, camera->dir, t))
         {
-            std::cout << "ray hit " << t << std::endl;
-            bullets.addBullet(pos + (t - 0.5f) * camera->dir, 20 * fps);
+            // std::cout << "ray hit " << t << std::endl;
+            auto newPos = pos + (t - 0.5f) * camera->dir;
+            bullets.addBullet(newPos, 20 * fps);
         }
     }
     if(!isLeft)

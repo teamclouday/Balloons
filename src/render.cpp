@@ -189,7 +189,9 @@ bool isIntersectSphere(const glm::vec3& origin, const glm::vec3& dir,
     float t1 = (-b - std::sqrt(delta)) / (2.0f * a);
     // no need to set hitpos because balloon will explode
     if(delta > 0.0f)
+    {
         if(t0 > 0.0f && t1 > 0.0f) return true;
+    }
     else if(delta == 0.0f) return true;
     return false;
 }

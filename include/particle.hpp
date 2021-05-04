@@ -11,7 +11,7 @@ public:
     void update();
     void addBullet(glm::vec3& position, int timeout);
 
-    const int MaxBullets = 15;
+    const unsigned MaxBullets = 15;
     struct BulletData
     {
         glm::vec3 pos;
