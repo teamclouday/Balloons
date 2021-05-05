@@ -3,6 +3,7 @@
 
 #include "camera.hpp"
 #include "particle.hpp"
+#include "state.hpp"
 #include <irrKlang.h>
 
 #include <string>
@@ -15,6 +16,8 @@ enum AnimState
     BACKWARD = 2,
 };
 
+// custom animation data
+// created for animations (move to a position and move back)
 struct AnimData
 {
     float data; // current data
@@ -55,6 +58,8 @@ private:
     std::vector<std::pair<std::string, int>> helpMessage;
     std::vector<std::pair<std::string, unsigned>> textures;
     unsigned textureActiveID;
+    GameState state;
+    std::string gameGuide; // game guide appears upper middle screen
 
     // gun animation specific
     glm::vec3 gunPos;
@@ -67,9 +72,15 @@ private:
     irrklang::ISoundEngine* audioEngine;
     irrklang::ISound* musicBackground;
 
+    // particles
+    ParticleBalloon* balloons;
+    std::vector<Firework*> fireworks;
+
 private:
     // rendering functions
     void renderEnv();
     void renderGun();
     void renderBullets();
+    void renderBalloons();
+    void renderFireworks();
 };

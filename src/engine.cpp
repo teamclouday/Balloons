@@ -16,11 +16,14 @@ GameEngine::GameEngine()
     helpMessage.resize(0); // The help message on the upper left corner of the screen
     camera = new Camera(); // init camera object
     audioEngine = irrklang::createIrrKlangDevice(); // init irrklang audio engine
+    balloons = new ParticleBalloon(); // load balloon manager
 }
 
 GameEngine::~GameEngine()
 {
     if(camera) delete camera;
+    if(balloons) delete balloons;
+    for(auto& data : fireworks) delete data;
     for(auto& pair : textures) if(pair.second) glDeleteTextures(1, &pair.second);
     if(musicBackground) musicBackground->drop();
     if(audioEngine) audioEngine->drop();
@@ -93,6 +96,10 @@ void GameEngine::setup()
     }
     musicBackground = audioEngine->play2D("assets/bensound-happyrock.mp3", true, false, true);
     if(musicBackground) musicBackground->setVolume(0.4f);
+
+    // setup game states
+    state = GameState::BEGINNING;
+    balloons->loadBalloonsBegin();
 
     srand(time(0));
 }
@@ -215,7 +222,8 @@ void GameEngine::updateLogics(int frameNum)
     }
     // update traced bullets
     bullets.update();
-
+    // update balloons
+    if(balloons) balloons->update();
 }
 
 void GameEngine::renderGame()
@@ -237,6 +245,8 @@ void GameEngine::renderGame()
     renderEnv();
     renderGun();
     renderBullets();
+    renderBalloons();
+    renderFireworks();
 }
 
 void GameEngine::renderInterface()
@@ -282,6 +292,8 @@ void GameEngine::renderInterface()
             glVertex3f(10.0f + 10.0f * (maxCharInLine - 1), winH - 5.0f, -0.5f);
         glEnd();
     }
+    // TODO: render game guide in upper middle screen
+    
     // next render center crosshair
     glDisable(GL_DEPTH_TEST);
     glLineWidth(5.0f);
@@ -332,6 +344,7 @@ void GameEngine::handleKeyboard(unsigned char key)
             {
                 enterViewControl();
                 addHelpMessage("You have entered control mode, press ESC to exit", 5 * fps);
+                addHelpMessage("LEFT click to shoot, RIGHT click and hold to aim", 5 * fps);
             }
             break;
         }

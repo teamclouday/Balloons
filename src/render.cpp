@@ -135,6 +135,15 @@ void GameEngine::renderBullets()
     glEnable(GL_LIGHTING);
 }
 
+void GameEngine::renderBalloons()
+{
+
+}
+
+void GameEngine::renderFireworks()
+{
+    
+}
 
 
 
@@ -249,6 +258,8 @@ bool GameEngine::trace(const glm::vec3& origin, const glm::vec3& dir, float& t)
         if(isIntersectTriangle(origin, dir, localT, v0, v1, v2))
             if(localT < minT) minT = localT;
     }
+
+    // TODO: check for balloons
 
     if(minT < 10000.0f) 
     {
