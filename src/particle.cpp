@@ -45,18 +45,26 @@ void ParticleBalloon::loadBalloonsStage4()
 
 }
 
-void ParticleBalloon::update()
+void ParticleBalloon::update(int fps)
 {
 
 }
 
-Firework::Firework(int num, int timeout, float radius)
+Firework::Firework(int num, int timeout, float radius, glm::vec3 center)
 {
     this->timeout = timeout;
 
 }
 
-void Firework::update()
+void Firework::update(int fps)
 {
-
+    timeout--;
+    float deltaTime = 1.0f / fps;
+    // the only force to consider is the gravity
+    glm::vec3 deltaVel{0.0f, GRAVITY_G * deltaTime, 0.0f};
+    for(auto& p : particles)
+    {
+        p.vel += deltaVel;
+        p.pos += p.vel * deltaTime;
+    }
 }

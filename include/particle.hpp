@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#define GRAVITY_G 9.8f // m/s^2
+
 // This class defines the bullets left on the objects
 class ParticleBullet
 {
@@ -47,7 +49,7 @@ public:
     void loadBalloonsStage2();
     void loadBalloonsStage3();
     void loadBalloonsStage4();
-    void update(); // update positions if enablePhysics
+    void update(int fps); // update positions if enablePhysics
 };
 
 // This class is created to show a firework
@@ -61,8 +63,8 @@ public:
         glm::vec3 pos;
         glm::vec3 vel;
     };
-    Firework(int num, int timeout, float radius);
-    void update(); // update particle positions
+    Firework(int num, int timeout, float radius, glm::vec3 center);
+    void update(int fps); // update particle positions
     std::vector<Particle> particles;
     glm::vec3 color; // color is randomly generated
     int timeout;

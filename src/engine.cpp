@@ -223,7 +223,20 @@ void GameEngine::updateLogics(int frameNum)
     // update traced bullets
     bullets.update();
     // update balloons
-    if(balloons) balloons->update();
+    if(balloons) balloons->update(fps);
+    // update fireworks
+    auto fireIter = fireworks.begin();
+    while(fireIter != fireworks.end())
+    {
+        (*fireIter)->update(fps);
+        if((*fireIter)->timeout < 0)
+        {
+            auto savedPtr = *fireIter;
+            fireIter = fireworks.erase(fireIter);
+            delete savedPtr;
+        }
+        else fireIter++;
+    }
 }
 
 void GameEngine::renderGame()
@@ -293,7 +306,7 @@ void GameEngine::renderInterface()
         glEnd();
     }
     // TODO: render game guide in upper middle screen
-    
+
     // next render center crosshair
     glDisable(GL_DEPTH_TEST);
     glLineWidth(5.0f);
