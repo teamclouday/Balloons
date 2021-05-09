@@ -64,8 +64,9 @@ public:
         glm::vec3 vel;
     };
     Firework(int num, int timeout, float radius, glm::vec3 center);
+    ~Firework();
     void update(int fps); // update particle positions
-    std::vector<Particle> particles;
+    std::vector<Particle*> particles;
     glm::vec3 color; // color is randomly generated
     int timeout;
 };

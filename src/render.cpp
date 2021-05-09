@@ -137,12 +137,55 @@ void GameEngine::renderBullets()
 
 void GameEngine::renderBalloons()
 {
-
+    glEnable(GL_LIGHT0);
+    for(auto& balloon : balloons->balloons)
+    {
+        switch(balloon.color)
+        {
+            case ParticleBalloon::BallonColor::RED:
+                glColor4f(235.0f/255.0f, 64.0f/255.0f, 52.0f/255.0f, 0.6f);
+                break;
+            case ParticleBalloon::BallonColor::BLUE:
+                glColor4f(52.0f/255.0f, 128.0f/255.0f, 235.0f/255.0f, 0.6f);
+                break;
+            case ParticleBalloon::BallonColor::GREEN:
+                glColor4f(55.0f/255.0f, 235.0f/255.0f, 52.0f/255.0f, 0.6f);
+                break;
+            case ParticleBalloon::BallonColor::PINK:
+                glColor4f(242.0f/255.0f, 80.0f/255.0f, 226.0f/255.0f, 0.6f);
+                break;
+            case ParticleBalloon::BallonColor::YELLOW:
+                glColor4f(242.0f/255.0f, 221.0f/255.0f, 80.0f/255.0f, 0.6f);
+                break;
+            default: break;
+        }
+        glPushMatrix();
+        glTranslatef(balloon.pos.x, balloon.pos.y, balloon.pos.z);
+        glutSolidSphere(balloon.radius, 20, 20);
+        glPopMatrix();
+    }
+    glDisable(GL_LIGHT0);
 }
 
 void GameEngine::renderFireworks()
 {
-    
+    glDisable(GL_LIGHTING);
+    glPointSize(3.0f);
+    float alpha;
+    for(auto firework : fireworks)
+    {
+        alpha = 1.0f;
+        if(firework->timeout < fps) alpha = 0.75f;
+        if(firework->timeout < fps / 2) alpha = 0.5f;
+        if(firework->timeout < fps / 4) alpha = 0.25f;
+        if(firework->timeout < 5) alpha = 0.1f;
+        glColor4f(firework->color.r, firework->color.g, firework->color.b, alpha);
+        glBegin(GL_POINTS);
+        for(auto& particle : firework->particles)
+            glVertex3fv(&particle->pos[0]);
+        glEnd();
+    }
+    glEnable(GL_LIGHTING);
 }
 
 
@@ -185,7 +228,7 @@ bool isIntersectTriangle(const glm::vec3& origin, const glm::vec3& dir, float& t
     return true;
 }
 
-bool isIntersectSphere(const glm::vec3& origin, const glm::vec3& dir,
+bool isIntersectSphere(const glm::vec3& origin, const glm::vec3& dir, float& t,
                         glm::vec3 center, float radius)
 {
     // reference: https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection
@@ -199,9 +242,17 @@ bool isIntersectSphere(const glm::vec3& origin, const glm::vec3& dir,
     // no need to set hitpos because balloon will explode
     if(delta > 0.0f)
     {
-        if(t0 > 0.0f && t1 > 0.0f) return true;
+        if(t0 > 0.0f && t1 > 0.0f)
+        {
+            t = std::min(t0, t1);
+            return true;
+        }
     }
-    else if(delta == 0.0f) return true;
+    else if(delta == 0.0f) 
+    {
+        t = t0;
+        return true;
+    }
     return false;
 }
 
@@ -259,7 +310,31 @@ bool GameEngine::trace(const glm::vec3& origin, const glm::vec3& dir, float& t)
             if(localT < minT) minT = localT;
     }
 
-    // TODO: check for balloons
+    // find nearest balloon hit
+    auto& toExplode = balloons->balloons.end();
+    float bT = 10000.0f;
+    for(auto& iter = balloons->balloons.begin(); iter != balloons->balloons.end(); iter++)
+    {
+        float localbT = 0.0f;
+        if(isIntersectSphere(origin, dir, localbT, iter->pos, iter->radius))
+        {
+            if(localbT < bT)
+            {
+                bT = localbT;
+                toExplode = iter;
+            }
+        }
+    }
+    // check if balloon is the nearest target hit
+    if(toExplode != balloons->balloons.end() && bT < minT)
+    {
+        // start a small firework at the balloon location
+        fireworks.push_back(new Firework(
+            50, 3 * fps, toExplode->radius, toExplode->pos
+        ));
+        // then remove the balloon
+        balloons->balloons.erase(toExplode);
+    }
 
     if(minT < 10000.0f) 
     {

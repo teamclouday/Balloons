@@ -237,6 +237,12 @@ void GameEngine::updateLogics(int frameNum)
         }
         else fireIter++;
     }
+    // if(fireworks.empty())
+    // {
+    //     fireworks.push_back(new Firework(
+    //         50, 4 * fps, 5.0f, glm::vec3(0.0f, 15.0f, -50.0f)
+    //     ));
+    // }
 }
 
 void GameEngine::renderGame()
@@ -396,8 +402,8 @@ void GameEngine::handleMouseClick(bool isDown, bool isLeft)
         if(gunAimR.data != gunAimR.start)
         {
             // add some randomness to the shot
-            pos += (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.0f - 1.0f) * 10.0f * camera->right + 
-                (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.0f - 1.0f) * 10.0f * camera->up;
+            pos += (static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX) * 2.0f - 1.0f) * 10.0f * camera->right + 
+                (static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX) * 2.0f - 1.0f) * 10.0f * camera->up;
         }
 
         if(trace(pos, camera->dir, t))
