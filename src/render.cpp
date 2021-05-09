@@ -311,9 +311,9 @@ bool GameEngine::trace(const glm::vec3& origin, const glm::vec3& dir, float& t)
     }
 
     // find nearest balloon hit
-    auto& toExplode = balloons->balloons.end();
+    auto toExplode = balloons->balloons.end();
     float bT = 10000.0f;
-    for(auto& iter = balloons->balloons.begin(); iter != balloons->balloons.end(); iter++)
+    for(auto iter = balloons->balloons.begin(); iter != balloons->balloons.end(); iter++)
     {
         float localbT = 0.0f;
         if(isIntersectSphere(origin, dir, localbT, iter->pos, iter->radius))
