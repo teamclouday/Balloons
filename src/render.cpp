@@ -138,9 +138,10 @@ void GameEngine::renderBullets()
 void GameEngine::renderBalloons()
 {
     glEnable(GL_LIGHT0);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
     for(auto& balloon : balloons->balloons)
     {
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR);
+        // inner sphere to create solid feeling
         switch(balloon.color)
         {
             case ParticleBalloon::BallonColor::RED:
@@ -160,6 +161,12 @@ void GameEngine::renderBalloons()
                 break;
             default: break;
         }
+        glPushMatrix();
+        glTranslatef(balloon.pos.x, balloon.pos.y, balloon.pos.z);
+        glutSolidSphere(balloon.radius * 0.8f, 20, 20);
+        glPopMatrix();
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
         glPushMatrix();
         glTranslatef(balloon.pos.x, balloon.pos.y, balloon.pos.z);
         glutSolidSphere(balloon.radius, 20, 20);
