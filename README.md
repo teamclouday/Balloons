@@ -22,6 +22,13 @@ cmake ..
 make
 ```
 
+### Build Requirements  
+
+* x64 machine  
+* compilers  
+  * MacOS & Linux (GCC supporting C++11)  
+  * Windows (MSVC supporting C++11)  
+
 ------
 
 ### Dependencies  
