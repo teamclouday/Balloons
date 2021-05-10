@@ -71,7 +71,7 @@ void GameEngine::setup()
     camera->worldUP = glm::vec3(0.0f, 1.0f, 0.0f);
     camera->pitch = 0.0f;
     camera->yaw = -90.0f;
-    camera->rotVel = 1.0f / fps * 4.0f;
+    camera->rotVel = 1.0f / fps * 3.0f;
     camera->update();
 
     // setup starting help messages
@@ -99,8 +99,8 @@ void GameEngine::setup()
 
     // setup game states
     state = GameState::BEGINNING;
-    balloons->loadBalloonsBegin();
-    // balloons->loadBalloonsStage2();
+    // balloons->loadBalloonsBegin();
+    balloons->loadBalloonsTest();
 
     srand(time(0));
 }
@@ -238,12 +238,6 @@ void GameEngine::updateLogics(int frameNum)
         }
         else fireIter++;
     }
-    // if(fireworks.empty())
-    // {
-    //     fireworks.push_back(new Firework(
-    //         50, 4 * fps, 5.0f, glm::vec3(0.0f, 15.0f, -50.0f)
-    //     ));
-    // }
 }
 
 void GameEngine::renderGame()

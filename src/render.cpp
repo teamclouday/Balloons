@@ -18,8 +18,8 @@ void GameEngine::renderEnv()
     const int wallSides = 5;
     const float wallHeight = 100.0f;
     const float wallWidth = 500.0f;
-    float wallAngle = 360.0f / wallSides;
-    float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
+    static float wallAngle = 360.0f / wallSides;
+    static float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
     for(int i = 0; i < wallSides; i++)
     {
         glColor3fv(colorWalls + i * 3);
@@ -267,8 +267,8 @@ bool GameEngine::trace(const glm::vec3& origin, const glm::vec3& dir, float& t)
     const int wallSides = 5;
     const float wallHeight = 100.0f;
     const float wallWidth = 500.0f;
-    float wallAngle = 360.0f / wallSides;
-    float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
+    static float wallAngle = 360.0f / wallSides;
+    static float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
     for(int i = 0; i < wallSides; i++)
     {
         float localT = 0.0f;

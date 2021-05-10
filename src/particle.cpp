@@ -24,6 +24,24 @@ void ParticleBullet::addBullet(glm::vec3& position, int timeout)
         data.erase(data.begin());
 }
 
+void ParticleBalloon::loadBalloonsTest()
+{
+    // load some balloons to test functions
+    enablePhysics = true;
+    balloons.push_back({
+        BallonColor::RED,
+        glm::vec3(0.0f, 25.0f, -100.0f),
+        glm::vec3(0.0f, 5.0f, 0.0f),
+        8.0f
+    });
+    balloons.push_back({
+        BallonColor::YELLOW,
+        glm::vec3(0.0f, 5.0f, -100.0f),
+        glm::vec3(0.0f, 2.5f, 0.0f),
+        8.0f
+    });
+}
+
 void ParticleBalloon::loadBalloonsBegin()
 {
     // load one balloon on the front wall
@@ -179,18 +197,102 @@ void ParticleBalloon::loadBalloonsStage2()
 
 void ParticleBalloon::loadBalloonsStage3()
 {
-
+    const int num = 20;
+    // only appear in foreground
 }
 
 void ParticleBalloon::loadBalloonsStage4()
 {
+    const int num = 50;
+    // appears everywhere
+}
 
+// helper function to load normal vector information for walls
+std::vector<glm::vec3> loadWallNormals()
+{
+    const int wallSides = 5;
+    const float wallHeight = 100.0f;
+    const float wallWidth = 500.0f;
+    float wallAngle = 360.0f / wallSides;
+    float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
+    std::vector<glm::vec3> n;
+    for(int i = 0; i < wallSides; i++)
+    {
+        glm::mat4 transform = glm::rotate(glm::mat4(1.0f), glm::radians(wallAngle * i), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::vec3 localN = glm::normalize(glm::vec3(transform * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
+        n.push_back(localN);
+    }
+    return n;
+}
+// helper function to load points on each wall, for distance calculation
+std::vector<glm::vec3> loadWallPoints()
+{
+    const int wallSides = 5;
+    const float wallHeight = 100.0f;
+    const float wallWidth = 500.0f;
+    float wallAngle = 360.0f / wallSides;
+    float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
+    std::vector<glm::vec3> p;
+    for(int i = 0; i < wallSides; i++)
+    {
+        glm::mat4 transform = glm::rotate(glm::mat4(1.0f), glm::radians(wallAngle * i), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::vec3 localP = glm::vec3(transform * glm::vec4(0.0f, 0.0f, -wallDist, 1.0f));
+        p.push_back(localP);
+    }
+    return p;
 }
 
 void ParticleBalloon::update(int fps)
 {
     if(!enablePhysics) return; // if physics not enabled, no update is needed
+    float deltaTime = 1.0f / fps;
+    const float groundLevel = -50.0f;
+    const float bounceCoeff = 1.0f; // reference: https://physics.stackexchange.com/questions/256468/model-formula-for-bouncing-ball
+    // the only force to consider is the gravity
+    glm::vec3 deltaVel{0.0f, -GRAVITY_G * deltaTime, 0.0f};
+    // TODO: add necessary wind force
 
+    // wall information
+    static std::vector<glm::vec3> wallNormals{loadWallNormals()};
+    static std::vector<glm::vec3> wallPoints{loadWallPoints()};
+    for(size_t i = 0; i < balloons.size(); i++)
+    {
+        auto& b1{balloons[i]};
+        b1.vel += deltaVel;
+        b1.pos += b1.vel * deltaTime;
+        // consider bouncing on the ground
+        if(b1.pos.y-b1.radius <= groundLevel) b1.vel = glm::reflect(b1.vel, glm::vec3(0.0f, 1.0f, 0.0f)) * bounceCoeff;
+        // consider bouncing on the walls
+        for(size_t wall = 0; wall < wallNormals.size(); wall++)
+        {
+            // reference: https://mathinsight.org/distance_point_plane
+            auto& p1 = wallPoints[wall*2];
+            auto& p2 = b1.pos;
+            auto& n = wallNormals[wall];
+            float D = -glm::dot(n, p1);
+            float d = std::abs(D + glm::dot(n, p2)); // length of normal is set to 1
+            if(d <= b1.radius) b1.vel = glm::reflect(b1.vel, n) * bounceCoeff;
+        }
+        // consider bouncing with other balloons
+        for(size_t j = 0; j < balloons.size(); j++)
+        {
+            if(i == j) continue;
+            auto& b2{balloons[j]};
+            glm::vec3 dir = b1.pos - b2.pos;
+            float dist = glm::length(b1.pos - b2.pos);
+            if(dist <= (b1.radius + b2.radius))
+            {
+                // collision detected
+                // reference: https://stackoverflow.com/questions/345838/ball-to-ball-collision-detection-and-handling
+                dir /= dist;
+                float b1ci = glm::dot(b1.vel, dir);
+                float b2ci = glm::dot(b2.vel, dir);
+                // assume same mass
+                b1.vel += (b2ci - b1ci) * dir;
+                b2.vel += (b1ci - b2ci) * dir;
+            }
+        }
+    }
 }
 
 Firework::Firework(int num, int timeout, float radius, glm::vec3 center)

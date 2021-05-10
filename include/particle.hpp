@@ -44,6 +44,7 @@ public:
     };
     std::vector<Balloon> balloons;
     bool enablePhysics = false; // whether to enable physics (gravity, wind)
+    void loadBalloonsTest();
     void loadBalloonsBegin();
     void loadBalloonsStage1();
     void loadBalloonsStage2();
