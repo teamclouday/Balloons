@@ -138,24 +138,25 @@ void GameEngine::renderBullets()
 void GameEngine::renderBalloons()
 {
     glEnable(GL_LIGHT0);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
     for(auto& balloon : balloons->balloons)
     {
         switch(balloon.color)
         {
             case ParticleBalloon::BallonColor::RED:
-                glColor4f(235.0f/255.0f, 64.0f/255.0f, 52.0f/255.0f, 0.6f);
+                glColor4f(235.0f/255.0f, 64.0f/255.0f, 52.0f/255.0f, 0.8f);
                 break;
             case ParticleBalloon::BallonColor::BLUE:
-                glColor4f(52.0f/255.0f, 128.0f/255.0f, 235.0f/255.0f, 0.6f);
+                glColor4f(52.0f/255.0f, 128.0f/255.0f, 235.0f/255.0f, 0.8f);
                 break;
             case ParticleBalloon::BallonColor::GREEN:
-                glColor4f(55.0f/255.0f, 235.0f/255.0f, 52.0f/255.0f, 0.6f);
+                glColor4f(55.0f/255.0f, 235.0f/255.0f, 52.0f/255.0f, 0.8f);
                 break;
             case ParticleBalloon::BallonColor::PINK:
-                glColor4f(242.0f/255.0f, 80.0f/255.0f, 226.0f/255.0f, 0.6f);
+                glColor4f(242.0f/255.0f, 80.0f/255.0f, 226.0f/255.0f, 0.8f);
                 break;
             case ParticleBalloon::BallonColor::YELLOW:
-                glColor4f(242.0f/255.0f, 221.0f/255.0f, 80.0f/255.0f, 0.6f);
+                glColor4f(242.0f/255.0f, 221.0f/255.0f, 80.0f/255.0f, 0.8f);
                 break;
             default: break;
         }
@@ -164,6 +165,7 @@ void GameEngine::renderBalloons()
         glutSolidSphere(balloon.radius, 20, 20);
         glPopMatrix();
     }
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_LIGHT0);
 }
 
@@ -334,6 +336,9 @@ bool GameEngine::trace(const glm::vec3& origin, const glm::vec3& dir, float& t)
         ));
         // then remove the balloon
         balloons->balloons.erase(toExplode);
+        // TODO: add code to check if the correct balloon is hit
+
+        return false; // return no hit so that no new bullet is added
     }
 
     if(minT < 10000.0f) 

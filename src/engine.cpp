@@ -100,6 +100,7 @@ void GameEngine::setup()
     // setup game states
     state = GameState::BEGINNING;
     balloons->loadBalloonsBegin();
+    // balloons->loadBalloonsStage2();
 
     srand(time(0));
 }
