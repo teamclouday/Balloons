@@ -48,7 +48,7 @@ void ParticleBalloon::loadBalloonsBegin()
     // ask player to shoot
     enablePhysics = false;
     const int wallSides = 5;
-    const float wallHeight = 100.0f;
+    // const float wallHeight = 100.0f;
     const float wallWidth = 500.0f;
     float wallAngle = 360.0f / wallSides;
     float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
@@ -91,7 +91,7 @@ void ParticleBalloon::loadBalloonsStage1()
     // ask player to shoot all of them
     enablePhysics = false;
     const int wallSides = 5;
-    const float wallHeight = 100.0f;
+    // const float wallHeight = 100.0f;
     const float wallWidth = 500.0f;
     float wallAngle = 360.0f / wallSides;
     float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
@@ -148,7 +148,7 @@ void ParticleBalloon::loadBalloonsStage2()
     // ask player to shoot the RED ones
     enablePhysics = false;
     const int wallSides = 5;
-    const float wallHeight = 100.0f;
+    // const float wallHeight = 100.0f;
     const float wallWidth = 500.0f;
     float wallAngle = 360.0f / wallSides;
     float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
@@ -211,10 +211,10 @@ void ParticleBalloon::loadBalloonsStage4()
 std::vector<glm::vec3> loadWallNormals()
 {
     const int wallSides = 5;
-    const float wallHeight = 100.0f;
-    const float wallWidth = 500.0f;
+    // const float wallHeight = 100.0f;
+    // const float wallWidth = 500.0f;
     float wallAngle = 360.0f / wallSides;
-    float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
+    // float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
     std::vector<glm::vec3> n;
     for(int i = 0; i < wallSides; i++)
     {
@@ -228,7 +228,7 @@ std::vector<glm::vec3> loadWallNormals()
 std::vector<glm::vec3> loadWallPoints()
 {
     const int wallSides = 5;
-    const float wallHeight = 100.0f;
+    // const float wallHeight = 100.0f;
     const float wallWidth = 500.0f;
     float wallAngle = 360.0f / wallSides;
     float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
