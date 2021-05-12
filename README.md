@@ -28,6 +28,7 @@ make
 * compilers  
   * MacOS & Linux (GCC supporting C++11)  
   * Windows (MSVC supporting C++11)  
+* cmake (>= 3.15)  
 
 ------
 
@@ -43,6 +44,7 @@ make
 ### New Features Explored
 
 * textures  
-* ray tracing  
+* ray casting  
 * particle system  
 * audio  
+* transparency  

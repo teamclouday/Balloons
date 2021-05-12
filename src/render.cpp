@@ -265,9 +265,9 @@ bool isIntersectSphere(const glm::vec3& origin, const glm::vec3& dir, float& t,
     return false;
 }
 
-// trace a gun shot and get first hit position
+// cast a gun shot and get first hit position
 // this function is written in render.cpp because it requires all data defined here
-bool GameEngine::trace(const glm::vec3& origin, const glm::vec3& dir, float& t)
+bool GameEngine::raycast(const glm::vec3& origin, const glm::vec3& dir, float& t)
 {
     float minT = 10000.0f; // set current minimum distance
     // check for environment

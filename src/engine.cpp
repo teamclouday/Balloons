@@ -221,7 +221,7 @@ void GameEngine::updateLogics(int frameNum)
         }
         default: break;
     }
-    // update traced bullets
+    // update casted bullets
     bullets.update();
     // update balloons
     if(balloons) balloons->update(fps);
@@ -391,7 +391,7 @@ void GameEngine::handleMouseClick(bool isDown, bool isLeft)
     {
         gunUpDegree.state = AnimState::FORWARD; // gun going up
         audioEngine->play2D("assets/12-Gauge-Pump-Action-Shotgun-Close-Gunshot-A-www.fesliyanstudios.com.mp3"); // play sound effect
-        // trace bullet
+        // cast bullet
         float t = 0.0f;
         auto pos = camera->pos;
         if(gunAimR.data != gunAimR.start)
@@ -401,7 +401,7 @@ void GameEngine::handleMouseClick(bool isDown, bool isLeft)
                 (static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX) * 2.0f - 1.0f) * 10.0f * camera->up;
         }
 
-        if(trace(pos, camera->dir, t))
+        if(raycast(pos, camera->dir, t))
         {
             // std::cout << "ray hit " << t << std::endl;
             auto newPos = pos + (t - 0.5f) * camera->dir;

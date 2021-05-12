@@ -49,7 +49,7 @@ private:
     void enterViewControl();
     void exitViewControl();
     void loadTextures();
-    bool trace(const glm::vec3& origin, const glm::vec3& dir, float& t);
+    bool raycast(const glm::vec3& origin, const glm::vec3& dir, float& t);
 
     Camera* camera;
     int winW, winH;
