@@ -58,8 +58,12 @@ private:
     std::vector<std::pair<std::string, int>> helpMessage;
     std::vector<std::pair<std::string, unsigned>> textures;
     unsigned textureActiveID;
+
+    // game state related
     GameState state;
-    std::string gameGuide; // game guide appears upper middle screen
+    std::string gameGuide;
+    int gameStateTimeout;
+    int score;
 
     // gun animation specific
     glm::vec3 gunPos;

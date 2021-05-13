@@ -46,6 +46,8 @@ void ParticleBalloon::loadBalloonsBegin()
 {
     // load one balloon on the front wall
     // ask player to shoot
+    balloons.clear();
+    balloons.resize(0);
     enablePhysics = false;
     const int wallSides = 5;
     // const float wallHeight = 100.0f;
@@ -89,6 +91,8 @@ void ParticleBalloon::loadBalloonsStage1()
 {
     // load balloons on every wall
     // ask player to shoot all of them
+    balloons.clear();
+    balloons.resize(0);
     enablePhysics = false;
     const int wallSides = 5;
     // const float wallHeight = 100.0f;
@@ -146,6 +150,8 @@ void ParticleBalloon::loadBalloonsStage2()
 {
     // load balloons on every wall
     // ask player to shoot the RED ones
+    balloons.clear();
+    balloons.resize(0);
     enablePhysics = false;
     const int wallSides = 5;
     // const float wallHeight = 100.0f;
@@ -197,14 +203,21 @@ void ParticleBalloon::loadBalloonsStage2()
 
 void ParticleBalloon::loadBalloonsStage3()
 {
+    // appears everywhere
     const int num = 20;
-    // only appear in foreground
+    balloons.clear();
+    balloons.resize(0);
+    enablePhysics = true;
 }
 
 void ParticleBalloon::loadBalloonsStage4()
 {
-    const int num = 50;
     // appears everywhere
+    const int num = 50;
+    balloons.clear();
+    balloons.resize(0);
+    enablePhysics = true;
+    enableWindForce = true;
 }
 
 // helper function to load normal vector information for walls

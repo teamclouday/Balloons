@@ -76,7 +76,8 @@ void GameEngine::setup()
 
     // setup starting help messages
     addHelpMessage("Fullscreen view is recommended", 5 * fps);
-    addHelpMessage("Press SPACE to enter view control mode", 8 * fps);
+    addHelpMessage("Press 1,2,3,4,5 to change gun skin!", 8 * fps);
+    // addHelpMessage("Press SPACE to enter view control mode", 8 * fps);
 
     // load textures for gun
     textures.push_back({"assets/pexels-aleksandr-slobodianyk-989946.jpg", 0});
@@ -99,8 +100,11 @@ void GameEngine::setup()
 
     // setup game states
     state = GameState::BEGINNING;
-    // balloons->loadBalloonsBegin();
-    balloons->loadBalloonsTest();
+    gameStateTimeout = 2 * fps;
+    gameGuide = "Welcome to Balloon Shooter!";
+    balloons->loadBalloonsBegin();
+    score = 0;
+    // balloons->loadBalloonsTest();
 
     srand(time(0));
 }
@@ -238,6 +242,60 @@ void GameEngine::updateLogics(int frameNum)
         }
         else fireIter++;
     }
+    // update game states
+    if(gameStateTimeout > 0) gameStateTimeout--;
+    if(gameStateTimeout <= 0)
+    {
+        switch(state)
+        {
+            case GameState::BEGINNING:
+            {
+                state = GameState::BEGINNING_SPACE;
+                gameGuide = "Press SPACE to control";
+                break;
+            }
+            case GameState::BEGINNING_SCORE:
+            {
+                state = GameState::BEGINNING_SHOOT;
+                gameGuide = "Shoot balloons on the wall!";
+                break;
+            }
+            default: break;
+        }
+    }
+    if(balloons->balloons.size() <= 0)
+    {
+        switch(state)
+        {
+            case GameState::BEGINNING_SHOOT:
+            {
+                state = GameState::STAGE1;
+                balloons->loadBalloonsStage1();
+                gameGuide = "#1 Shoot all balloons!";
+                break;
+            }
+            case GameState::STAGE1:
+            {
+                state = GameState::STAGE2;
+                balloons->loadBalloonsStage2();
+                gameGuide = "#2 Shoot all RED balloons!";
+                break;
+            }
+            case GameState::STAGE3:
+            {
+                state = GameState::STAGE4;
+                balloons->loadBalloonsStage4();
+                gameGuide = "#4 Shoot all RED balloons in the sky!";
+                break;
+            }
+            default: break;
+        }
+    }
+    // TODO: if score is negative
+    if(score < 0)
+    {
+        
+    }
 }
 
 void GameEngine::renderGame()
@@ -306,8 +364,47 @@ void GameEngine::renderInterface()
             glVertex3f(10.0f + 10.0f * (maxCharInLine - 1), winH - 5.0f, -0.5f);
         glEnd();
     }
-    // TODO: render game guide in upper middle screen
-
+    // render game guide in upper middle screen
+    glPushMatrix();
+    glTranslatef(winW / 2.0f, winH - 80.0f, 0.0f);
+    glScalef(1.5f, 1.5f, 1.0f);
+    glPushMatrix();
+    glLineWidth(2.0f);
+    glPushAttrib(GL_CURRENT_BIT);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    float gameGuideSize = static_cast<float>(gameGuide.size());
+    glTranslatef(-gameGuideSize / 2.0f * 8.5f, 0.0f, 0.5f);
+    glScalef(0.08f, 0.1f, 1.0f);
+    for(char& ch : gameGuide) glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, ch);
+    glPopAttrib();
+    glPopMatrix();
+    glColor4f(0.5f, 0.5f, 0.5f, 0.8f);
+    glBegin(GL_QUADS);
+        glVertex3f(-gameGuideSize/2.0f * 8.5f - 10.0f, 15.0f, -0.5f);
+        glVertex3f(-gameGuideSize/2.0f * 8.5f - 10.0f, -5.0f, -0.5f);
+        glVertex3f(gameGuideSize/2.0f * 8.5f + 10.0f, -5.0f, -0.5f);
+        glVertex3f(gameGuideSize/2.0f * 8.5f + 10.0f, 15.0f, -0.5f);
+    glEnd();
+    glPopMatrix();
+    // render score in lower right screen
+    if(state >= GameState::BEGINNING_SCORE)
+    {
+        std::stringstream scoresstr;
+        scoresstr << score;
+        std::string scorestr = scoresstr.str();
+        glPushAttrib(GL_CURRENT_BIT);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glRasterPos3f(winW - 12.0f * scorestr.size() - 20.0f, winH - 35.0f, 0.5f);
+        for(char& ch : scorestr) glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        glPopAttrib();
+        glColor4f(0.3f, 0.3f, 0.3f, 0.8f);
+        glBegin(GL_QUADS);
+            glVertex3f(winW - 12.0f * scorestr.size() - 25.0f, winH - 15.0f, -0.5f);
+            glVertex3f(winW - 12.0f * scorestr.size() - 25.0f, winH - 40.0f, -0.5f);
+            glVertex3f(winW - 15.0f, winH - 40.0f, -0.5f);
+            glVertex3f(winW - 15.0f, winH - 15.0f, -0.5f);
+        glEnd();
+    }
     // next render center crosshair
     glDisable(GL_DEPTH_TEST);
     glLineWidth(5.0f);
@@ -358,7 +455,12 @@ void GameEngine::handleKeyboard(unsigned char key)
             {
                 enterViewControl();
                 addHelpMessage("You have entered control mode, press ESC to exit", 5 * fps);
-                addHelpMessage("LEFT click to shoot, RIGHT click and hold to aim", 5 * fps);
+                // addHelpMessage("LEFT click to shoot, RIGHT click and hold to aim", 5 * fps);
+                if(state == GameState::BEGINNING_SPACE)
+                {
+                    state = GameState::BEGINNING_LEFT;
+                    gameGuide = "Left click to shoot";
+                }
             }
             break;
         }
@@ -389,6 +491,12 @@ void GameEngine::handleMouseClick(bool isDown, bool isLeft)
     if(isLeft && isDown && gunUpDegree.data > gunUpDegree.end / 3.0f) return; // at this point, the gun is not ready to shoot
     if(isLeft && isDown)
     {
+        // update game state
+        if(state == GameState::BEGINNING_LEFT)
+        {
+            state = GameState::BEGINNING_RIGHT;
+            gameGuide = "Right click and hold to aim";
+        }
         gunUpDegree.state = AnimState::FORWARD; // gun going up
         audioEngine->play2D("assets/12-Gauge-Pump-Action-Shotgun-Close-Gunshot-A-www.fesliyanstudios.com.mp3"); // play sound effect
         // cast bullet
@@ -405,6 +513,7 @@ void GameEngine::handleMouseClick(bool isDown, bool isLeft)
         {
             // std::cout << "ray hit " << t << std::endl;
             auto newPos = pos + (t - 0.5f) * camera->dir;
+            // addHelpMessage("Ray Hit", 2 * fps);
             bullets.addBullet(newPos, 20 * fps);
         }
     }
@@ -414,6 +523,12 @@ void GameEngine::handleMouseClick(bool isDown, bool isLeft)
         {
             gunAimD.state = AnimState::BACKWARD;
             gunAimR.state = AnimState::BACKWARD;
+            if(state == GameState::BEGINNING_RIGHT)
+            {
+                state = GameState::BEGINNING_SCORE;
+                gameGuide = "Your score is on the upper right screen";
+                gameStateTimeout = 3 * fps;
+            }
         }
         else
         {

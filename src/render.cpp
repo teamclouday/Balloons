@@ -337,15 +337,77 @@ bool GameEngine::raycast(const glm::vec3& origin, const glm::vec3& dir, float& t
     // check if balloon is the nearest target hit
     if(toExplode != balloons->balloons.end() && bT < minT)
     {
+        // TODO: add code to check if the correct balloon is hit
+        bool checkRest = false;
+        if(state <= GameState::BEGINNING_SHOOT) score += 1;
+        switch(state)
+        {
+            case GameState::STAGE1:
+            {
+                score++;
+                break;
+            }
+            case GameState::STAGE2:
+            {
+                if(toExplode->color == ParticleBalloon::BallonColor::RED)
+                {
+                    score++;
+                    checkRest = true;
+                }
+                else
+                {
+                    addHelpMessage("Wrong color hit", 2 * fps);
+                    score -= 2;
+                }
+                break;
+            }
+            case GameState::STAGE3:
+            {
+                score++;
+                break;
+            }
+            case GameState::STAGE4:
+            {
+
+
+
+
+                break;
+            }
+            default: break;
+        }
         // start a small firework at the balloon location
         fireworks.push_back(new Firework(
             50, 3 * fps, toExplode->radius, toExplode->pos
         ));
         // then remove the balloon
         balloons->balloons.erase(toExplode);
-        // TODO: add code to check if the correct balloon is hit
-
+        if(checkRest)
+        {
+            int count = 0;
+            for(auto iter = balloons->balloons.begin(); iter != balloons->balloons.end(); iter++)
+            {
+                if(iter->color == ParticleBalloon::BallonColor::RED) count++;
+            }
+            if(count <= 0)
+            {
+                if(state == GameState::STAGE2)
+                {
+                    state = GameState::STAGE3;
+                    balloons->loadBalloonsStage3();
+                    gameGuide = "#3 Shoot all balloons in the sky!";
+                }
+            }
+        }
         return false; // return no hit so that no new bullet is added
+    }
+    else
+    {
+        if(state >= GameState::STAGE1)
+        {
+            // addHelpMessage("Missed shot", 1 * fps);
+            score--;
+        }
     }
 
     if(minT < 10000.0f) 
