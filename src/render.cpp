@@ -495,7 +495,7 @@ void GameEngine::renderEndWin()
 
     glPushAttrib(GL_CURRENT_BIT);
     glColor3f(1.0f, 1.0f, 1.0f);
-    for(int line = 0; line < thanks.size(); line++)
+    for(unsigned line = 0; line < thanks.size(); line++)
     {
         auto& str = thanks[line];
         glRasterPos3f(winW / 2.0f - str.size() / 2.0f * 10.0f, endWinMessageScroll + winH / 2.0f - line * 30.0f, -0.5f);
