@@ -47,7 +47,7 @@ bool ModelGun::load()
     const tinygltf::Scene& scene = model.scenes[model.defaultScene];
     for(auto& nodeID : scene.nodes)
     {
-        if(nodeID >= 0 && nodeID < model.nodes.size())
+        if(nodeID >= 0 && nodeID < static_cast<int>(model.nodes.size()))
             loadSceneNodes(model, model.nodes[nodeID]);
     }
     return true;
@@ -88,11 +88,11 @@ void ModelGun::loadTexture(tinygltf::Model& model)
 
 void ModelGun::loadSceneNodes(tinygltf::Model& model, tinygltf::Node& node)
 {
-    if(node.mesh >= 0 && node.mesh < model.meshes.size())
+    if(node.mesh >= 0 && node.mesh < static_cast<int>(model.meshes.size()))
         loadSceneMeshes(model, model.meshes[node.mesh]);
     for(auto& nodeID : node.children)
     {
-        if(nodeID >= 0 && nodeID < model.nodes.size())
+        if(nodeID >= 0 && nodeID < static_cast<int>(model.nodes.size()))
             loadSceneNodes(model, model.nodes[nodeID]);
     }
 }

@@ -111,7 +111,7 @@ void GameEngine::setup()
         std::cout << "Audio engine failed to load, no sound will be available" << std::endl;
     }
     musicBackground = audioEngine->play2D("assets/bensound-happyrock.mp3", true, false, true);
-    if(musicBackground) musicBackground->setVolume(0.4f);
+    if(musicBackground) musicBackground->setVolume(0.3f);
 
     // setup game states
     state = GameState::BEGINNING;
