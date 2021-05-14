@@ -1,3 +1,16 @@
+// main.cpp
+// Assignment: CIS425 Final Project
+// Environment/Compiler:
+//                  Visual Studio Community 2019 (Tested)
+//                  Linux GCC (Tested)
+//                  MacOS GCC (Not Tested)
+// Date: May 14, 2021
+// Official Name:  Sida Zhu
+// E-mail:
+//      szhu28@syr.edu
+//      teamclouday@gmail.com
+// File Description:
+//      This is the starting point of the program
 #include "basic.hpp"
 
 int main(int argc, char** argv)

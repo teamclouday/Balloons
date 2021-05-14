@@ -1,3 +1,17 @@
+// render.cpp
+// Assignment: CIS425 Final Project
+// Environment/Compiler:
+//                  Visual Studio Community 2019 (Tested)
+//                  Linux GCC (Tested)
+//                  MacOS GCC (Not Tested)
+// Date: May 14, 2021
+// Official Name:  Sida Zhu
+// E-mail:
+//      szhu28@syr.edu
+//      teamclouday@gmail.com
+// File Description:
+//      This source file implements all rendering functions for GameEngine class
+//      This file also contains functions for ray casting and intersection tests
 #include "engine.hpp"
 #include <GL/freeglut.h>
 #include <glm/gtc/matrix_transform.hpp>

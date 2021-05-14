@@ -1,4 +1,19 @@
-// This header defines particle systems for different objects
+// particle.hpp
+// Assignment: CIS425 Final Project
+// Environment/Compiler:
+//                  Visual Studio Community 2019 (Tested)
+//                  Linux GCC (Tested)
+//                  MacOS GCC (Not Tested)
+// Date: May 14, 2021
+// Official Name:  Sida Zhu
+// E-mail:
+//      szhu28@syr.edu
+//      teamclouday@gmail.com
+// File Description:
+//      This header file defines the following classes as particle systems
+//          ParticleBullet      (for bullets appearing on surfaces)
+//          ParticleBalloon     (for balloons with physical interactions)
+//          Firework            (for fireworks appearing after balloon is hit)
 #pragma once
 
 #include <glm/glm.hpp>

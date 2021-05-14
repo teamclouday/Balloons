@@ -1,5 +1,17 @@
-// This header defines the game state
-// also shows the game logic designs
+// state.hpp
+// Assignment: CIS425 Final Project
+// Environment/Compiler:
+//                  Visual Studio Community 2019 (Tested)
+//                  Linux GCC (Tested)
+//                  MacOS GCC (Not Tested)
+// Date: May 14, 2021
+// Official Name:  Sida Zhu
+// E-mail:
+//      szhu28@syr.edu
+//      teamclouday@gmail.com
+// File Description:
+//      This header file defines the GameState enum
+//      This file also contains the game logic designs written as comments
 #pragma once
 
 enum GameState
@@ -38,5 +50,6 @@ enum GameState
 // shoot right balloon, score + 1
 // if color specified and shoot wrong color, score - 2
 // if missed shot, score - 1
-// if accumulated score is negative, jump scare and show "You LOSE!" (black screen)
-// if complete all challenges and survive, show "You WIN! Score = " (fireworks in background)
+// if accumulated score is negative, show "You LOSE!" with death picture, play funny music
+// if complete all challenges and survive, show "You WIN!", fireworks in background,
+//          play winning music, show list scrolling for contributors

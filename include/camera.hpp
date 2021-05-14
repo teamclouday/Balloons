@@ -1,3 +1,16 @@
+// camera.hpp
+// Assignment: CIS425 Final Project
+// Environment/Compiler:
+//                  Visual Studio Community 2019 (Tested)
+//                  Linux GCC (Tested)
+//                  MacOS GCC (Not Tested)
+// Date: May 14, 2021
+// Official Name:  Sida Zhu
+// E-mail:
+//      szhu28@syr.edu
+//      teamclouday@gmail.com
+// File Description:
+//      This header file declares Camera class for first person view
 #pragma once
 
 #include <glm/glm.hpp>
