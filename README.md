@@ -22,6 +22,8 @@ cmake ..
 make
 ```
 
+Then go into the auto generated folder `bin` and run the executable `balloon`  
+
 ### Build Requirements  
 
 * x64 machine  
