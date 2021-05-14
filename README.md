@@ -39,7 +39,7 @@ Then go into the auto generated folder `bin` and run the executable `balloon`
 * glm ([0.9.9.8](https://github.com/g-truc/glm/releases/tag/0.9.9.8))  
 * irrKlang ([1.6.0](https://www.ambiera.com/irrklang/downloads.html))  
 * stb_image ([2.26](https://github.com/nothings/stb))  
-
+* tinygltf ([2.5.0](https://github.com/syoyo/tinygltf/releases/tag/v2.5.0), included but not used in final game)  
 
 ------
 
