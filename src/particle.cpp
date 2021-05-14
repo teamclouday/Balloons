@@ -32,13 +32,13 @@ void ParticleBalloon::loadBalloonsTest()
         BallonColor::RED,
         glm::vec3(0.0f, 25.0f, -100.0f),
         glm::vec3(0.0f, 5.0f, 0.0f),
-        8.0f
+        BALLOON_SIZE
     });
     balloons.push_back({
         BallonColor::YELLOW,
         glm::vec3(0.0f, 5.0f, -100.0f),
         glm::vec3(0.0f, 2.5f, 0.0f),
-        8.0f
+        BALLOON_SIZE
     });
 }
 
@@ -59,31 +59,31 @@ void ParticleBalloon::loadBalloonsBegin()
         BallonColor::RED,
         glm::vec3(-wallDist * std::sin(glm::radians(0.0f)), 25.0f, -wallDist * std::cos(glm::radians(0.0f))),
         glm::vec3(0.0f),
-        8.0f
+        BALLOON_SIZE
     });
     balloons.push_back({
         BallonColor::BLUE,
         glm::vec3(-wallDist * std::sin(glm::radians(wallAngle/4.0f)), 25.0f, -wallDist * std::cos(glm::radians(wallAngle/4.0f))),
         glm::vec3(0.0f),
-        8.0f
+        BALLOON_SIZE
     });
     balloons.push_back({
         BallonColor::GREEN,
         glm::vec3(-wallDist * std::sin(glm::radians(-wallAngle/4.0f)), 25.0f, -wallDist * std::cos(glm::radians(-wallAngle/4.0f))),
         glm::vec3(0.0f),
-        8.0f
+        BALLOON_SIZE
     });
     balloons.push_back({
         BallonColor::PINK,
         glm::vec3(-wallDist * std::sin(glm::radians(wallAngle/8.0f)), 0.0f, -wallDist * std::cos(glm::radians(wallAngle/8.0f))),
         glm::vec3(0.0f),
-        8.0f
+        BALLOON_SIZE
     });
     balloons.push_back({
         BallonColor::YELLOW,
         glm::vec3(-wallDist * std::sin(glm::radians(-wallAngle/8.0f)), 0.0f, -wallDist * std::cos(glm::radians(-wallAngle/8.0f))),
         glm::vec3(0.0f),
-        8.0f
+        BALLOON_SIZE
     });
 }
 
@@ -107,19 +107,19 @@ void ParticleBalloon::loadBalloonsStage1()
             static_cast<BallonColor>(std::rand() % 5),
             glm::vec3(-wallDist * std::sin(glm::radians(angle)), 15.0f, -wallDist * std::cos(glm::radians(angle))),
             glm::vec3(0.0f),
-            8.0f
+            BALLOON_SIZE
         });
         balloons.push_back({
             static_cast<BallonColor>(std::rand() % 5),
             glm::vec3(-wallDist * std::sin(glm::radians(angle+wallAngle/4.0f)), 15.0f, -wallDist * std::cos(glm::radians(angle+wallAngle/4.0f))),
             glm::vec3(0.0f),
-            8.0f
+            BALLOON_SIZE
         });
         balloons.push_back({
             static_cast<BallonColor>(std::rand() % 5),
             glm::vec3(-wallDist * std::sin(glm::radians(angle-wallAngle/4.0f)), 15.0f, -wallDist * std::cos(glm::radians(angle-wallAngle/4.0f))),
             glm::vec3(0.0f),
-            8.0f
+            BALLOON_SIZE
         });
     }
 }
@@ -166,37 +166,37 @@ void ParticleBalloon::loadBalloonsStage2()
             static_cast<BallonColor>(custom_rand_color()),
             glm::vec3(-wallDist * std::sin(glm::radians(angle)), 25.0f, -wallDist * std::cos(glm::radians(angle))),
             glm::vec3(0.0f),
-            8.0f
+            BALLOON_SIZE
         });
         balloons.push_back({
             static_cast<BallonColor>(custom_rand_color()),
             glm::vec3(-wallDist * std::sin(glm::radians(angle+wallAngle/4.0f)), 25.0f, -wallDist * std::cos(glm::radians(angle+wallAngle/4.0f))),
             glm::vec3(0.0f),
-            8.0f
+            BALLOON_SIZE
         });
         balloons.push_back({
             static_cast<BallonColor>(custom_rand_color()),
             glm::vec3(-wallDist * std::sin(glm::radians(angle-wallAngle/4.0f)), 25.0f, -wallDist * std::cos(glm::radians(angle-wallAngle/4.0f))),
             glm::vec3(0.0f),
-            8.0f
+            BALLOON_SIZE
         });
         balloons.push_back({
             static_cast<BallonColor>(custom_rand_color()),
             glm::vec3(-wallDist * std::sin(glm::radians(angle)), 0.0f, -wallDist * std::cos(glm::radians(angle))),
             glm::vec3(0.0f),
-            8.0f
+            BALLOON_SIZE
         });
         balloons.push_back({
             static_cast<BallonColor>(custom_rand_color()),
             glm::vec3(-wallDist * std::sin(glm::radians(angle+wallAngle/4.0f)), 0.0f, -wallDist * std::cos(glm::radians(angle+wallAngle/4.0f))),
             glm::vec3(0.0f),
-            8.0f
+            BALLOON_SIZE
         });
         balloons.push_back({
             static_cast<BallonColor>(custom_rand_color()),
             glm::vec3(-wallDist * std::sin(glm::radians(angle-wallAngle/4.0f)), 0.0f, -wallDist * std::cos(glm::radians(angle-wallAngle/4.0f))),
             glm::vec3(0.0f),
-            8.0f
+            BALLOON_SIZE
         });
     }
 }
@@ -204,20 +204,76 @@ void ParticleBalloon::loadBalloonsStage2()
 void ParticleBalloon::loadBalloonsStage3()
 {
     // appears everywhere
-    const int num = 20;
+    const int num = 40;
     balloons.clear();
     balloons.resize(0);
     enablePhysics = true;
+    float angle = 0.0f;
+    float height = 30.0f;
+    const int wallSides = 5;
+    // const float wallHeight = 100.0f;
+    const float wallWidth = 500.0f;
+    float wallAngle = 360.0f / wallSides;
+    float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
+    wallDist *= 0.8f;
+    for(int i = 0; i < num; i++)
+    {
+        balloons.push_back({
+            static_cast<BallonColor>(custom_rand_color()),
+            glm::vec3(-wallDist * std::sin(glm::radians(angle)), height, -wallDist * std::cos(glm::radians(angle))),
+            glm::vec3(
+                static_cast<float>(std::rand())/static_cast<float>(RAND_MAX) * 30.0f - 15.0f,
+                static_cast<float>(std::rand())/static_cast<float>(RAND_MAX) * 30.0f - 15.0f,
+                static_cast<float>(std::rand())/static_cast<float>(RAND_MAX) * 30.0f - 15.0f
+            ),
+            BALLOON_SIZE
+        });
+        angle += static_cast<float>(std::rand())/static_cast<float>(RAND_MAX) * 20.0f + 15.0f;
+        if(angle > 360.0f)
+        {
+            angle -= 360.0f;
+            height += 20.0f;
+            wallDist *= 0.9f;
+        }
+    }
 }
 
 void ParticleBalloon::loadBalloonsStage4()
 {
     // appears everywhere
-    const int num = 50;
+    const int num = 100;
     balloons.clear();
     balloons.resize(0);
     enablePhysics = true;
     enableWindForce = true;
+    float angle = 0.0f;
+    float height = 30.0f;
+    const int wallSides = 5;
+    // const float wallHeight = 100.0f;
+    const float wallWidth = 500.0f;
+    float wallAngle = 360.0f / wallSides;
+    float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
+    wallDist *= 0.8f;
+    for(int i = 0; i < num; i++)
+    {
+        balloons.push_back({
+            static_cast<BallonColor>(std::rand() % 5),
+            glm::vec3(-wallDist * std::sin(glm::radians(angle)), height, -wallDist * std::cos(glm::radians(angle))),
+            glm::vec3(
+                static_cast<float>(std::rand())/static_cast<float>(RAND_MAX) * 30.0f - 15.0f,
+                static_cast<float>(std::rand())/static_cast<float>(RAND_MAX) * 30.0f - 15.0f,
+                static_cast<float>(std::rand())/static_cast<float>(RAND_MAX) * 30.0f - 15.0f
+            ),
+            BALLOON_SIZE
+        });
+        angle += static_cast<float>(std::rand())/static_cast<float>(RAND_MAX) * 20.0f + 15.0f;
+        if(angle > 360.0f)
+        {
+            angle -= 360.0f;
+            height += 20.0f;
+            wallDist *= 0.9f;
+        }
+    }
 }
 
 // helper function to load normal vector information for walls
@@ -245,6 +301,7 @@ std::vector<glm::vec3> loadWallPoints()
     const float wallWidth = 500.0f;
     float wallAngle = 360.0f / wallSides;
     float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
+    wallDist * 0.9f;
     std::vector<glm::vec3> p;
     for(int i = 0; i < wallSides; i++)
     {
@@ -274,7 +331,11 @@ void ParticleBalloon::update(int fps)
         b1.vel += deltaVel;
         b1.pos += b1.vel * deltaTime;
         // consider bouncing on the ground
-        if(b1.pos.y-b1.radius <= groundLevel) b1.vel = glm::reflect(b1.vel, glm::vec3(0.0f, 1.0f, 0.0f)) * bounceCoeff;
+        if(b1.pos.y-b1.radius <= groundLevel) 
+        {
+            b1.vel = glm::reflect(b1.vel, glm::vec3(0.0f, 1.0f, 0.0f)) * bounceCoeff;
+            b1.pos.y = groundLevel + b1.radius;
+        }
         // consider bouncing on the walls
         for(size_t wall = 0; wall < wallNormals.size(); wall++)
         {

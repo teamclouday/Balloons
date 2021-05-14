@@ -102,9 +102,11 @@ void GameEngine::setup()
     state = GameState::BEGINNING;
     gameStateTimeout = 2 * fps;
     gameGuide = "Welcome to Balloon Shooter!";
-    balloons->loadBalloonsBegin();
+    // balloons->loadBalloonsBegin();
     score = 0;
     // balloons->loadBalloonsTest();
+    state = GameState::STAGE3;
+    balloons->loadBalloonsStage3();
 
     srand(time(0));
 }

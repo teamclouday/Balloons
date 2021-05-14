@@ -4,7 +4,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#define GRAVITY_G 9.8f // m/s^2
+#define GRAVITY_G       98.0f // m/s^2
+#define BALLOON_SIZE    10.0f
 
 // This class defines the bullets left on the objects
 class ParticleBullet
