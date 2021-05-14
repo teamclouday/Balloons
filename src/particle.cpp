@@ -320,8 +320,6 @@ void ParticleBalloon::update(int fps)
     const float bounceCoeff = 1.0f; // reference: https://physics.stackexchange.com/questions/256468/model-formula-for-bouncing-ball
     // the only force to consider is the gravity
     glm::vec3 deltaVel{0.0f, -GRAVITY_G * deltaTime, 0.0f};
-    // TODO: add necessary wind force
-
     // wall information
     static std::vector<glm::vec3> wallNormals{loadWallNormals()};
     static std::vector<glm::vec3> wallPoints{loadWallPoints()};

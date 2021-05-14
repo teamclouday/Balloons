@@ -51,6 +51,9 @@ private:
     void loadTextures();
     bool raycast(const glm::vec3& origin, const glm::vec3& dir, float& t);
 
+    void enterEndWin();
+    void enterEndLose();
+
     Camera* camera;
     int winW, winH;
     int mouseX, mouseY;
@@ -58,12 +61,16 @@ private:
     std::vector<std::pair<std::string, int>> helpMessage;
     std::vector<std::pair<std::string, unsigned>> textures;
     unsigned textureActiveID;
+    unsigned textureLossSpecial;
 
     // game state related
     GameState state;
     std::string gameGuide;
     int gameStateTimeout;
     int score;
+    int totalShots;
+    int totalShotsCorrect;
+    float endWinMessageScroll = 0.0f;
 
     // gun animation specific
     glm::vec3 gunPos;
@@ -87,4 +94,7 @@ private:
     void renderBullets();
     void renderBalloons();
     void renderFireworks();
+
+    void renderEndWin();
+    void renderEndLose();
 };

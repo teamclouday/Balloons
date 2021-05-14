@@ -30,10 +30,10 @@ enum GameState
     WIN = 21,
 };
 
-#define GAME_TIMEOUT_STAGE1 20
-#define GAME_TIMEOUT_STAGE2 20
-#define GAME_TIMEOUT_STAGE3 20
-#define GAME_TIMEOUT_STAGE4 30
+// #define GAME_TIMEOUT_STAGE1 20
+// #define GAME_TIMEOUT_STAGE2 20
+// #define GAME_TIMEOUT_STAGE3 20
+// #define GAME_TIMEOUT_STAGE4 30
 
 // shoot right balloon, score + 1
 // if color specified and shoot wrong color, score - 2

@@ -2,6 +2,7 @@
 #include <GL/freeglut.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cmath>
+#include <sstream>
 
 // render the environment
 void GameEngine::renderEnv()
@@ -337,14 +338,18 @@ bool GameEngine::raycast(const glm::vec3& origin, const glm::vec3& dir, float& t
     // check if balloon is the nearest target hit
     if(toExplode != balloons->balloons.end() && bT < minT)
     {
-        // TODO: add code to check if the correct balloon is hit
         bool checkRest = false;
-        if(state <= GameState::BEGINNING_SHOOT) score += 1;
+        if(state <= GameState::BEGINNING_SHOOT)
+        {
+            score += 1;
+            totalShotsCorrect++;
+        }
         switch(state)
         {
             case GameState::STAGE1:
             {
                 score++;
+                totalShotsCorrect++;
                 break;
             }
             case GameState::STAGE2:
@@ -353,6 +358,7 @@ bool GameEngine::raycast(const glm::vec3& origin, const glm::vec3& dir, float& t
                 {
                     score++;
                     checkRest = true;
+                    totalShotsCorrect++;
                 }
                 else
                 {
@@ -364,21 +370,29 @@ bool GameEngine::raycast(const glm::vec3& origin, const glm::vec3& dir, float& t
             case GameState::STAGE3:
             {
                 score++;
+                totalShotsCorrect++;
                 break;
             }
             case GameState::STAGE4:
             {
-
-
-
-
+                if(toExplode->color == ParticleBalloon::BallonColor::GREEN)
+                {
+                    score++;
+                    totalShotsCorrect++;
+                    checkRest = true;
+                }
+                else
+                {
+                    addHelpMessage("Wrong color hit", 2 * fps);
+                    score -= 2;
+                }
                 break;
             }
             default: break;
         }
         // start a small firework at the balloon location
         fireworks.push_back(new Firework(
-            50, 3 * fps, toExplode->radius, toExplode->pos
+            50, 3 * fps, toExplode->radius * 2.0f, toExplode->pos
         ));
         // then remove the balloon
         balloons->balloons.erase(toExplode);
@@ -396,6 +410,14 @@ bool GameEngine::raycast(const glm::vec3& origin, const glm::vec3& dir, float& t
                     state = GameState::STAGE3;
                     balloons->loadBalloonsStage3();
                     gameGuide = "#3 Shoot all balloons in the sky!";
+                }
+                if(state == GameState::STAGE4)
+                {
+                    if(score >= 0) 
+                    {
+                        state = GameState::WIN;
+                        enterEndWin();
+                    }
                 }
             }
         }
@@ -416,4 +438,129 @@ bool GameEngine::raycast(const glm::vec3& origin, const glm::vec3& dir, float& t
         return true;
     }
     return false;
+}
+
+void GameEngine::renderEndWin()
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_LIGHTING);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0f, winW, 0.0f, winH, -1.0f, 1.0f);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    std::string message = "You Win!";
+    glPushMatrix();
+    glTranslatef(winW / 2.0f - message.size() / 2.0f * 60.0f, winH - 120.0f, 0.5f);
+    glScalef(0.6f, 0.6f, 1.0f);
+    glLineWidth(2.0f);
+    glPushAttrib(GL_CURRENT_BIT);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for(char& ch : message) glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, ch);
+    glPopAttrib();
+    glPopMatrix();
+
+    std::stringstream sstr1;
+    sstr1 << "Total Score: " << score;
+    std::stringstream sstr2;
+    sstr2 << "Total Shots: " << totalShots;
+    std::stringstream sstr3;
+    sstr3 << "Total Correct Shots: " << totalShotsCorrect;
+
+    static std::vector<std::string> thanks{
+        "", "", "",
+        sstr1.str(), "",
+        sstr2.str(), "",
+        sstr3.str(), "",
+        "", "",
+        "Game Engine", "",
+        "Sida Zhu", "", "",
+        "Logics Design", "",
+        "Sida Zhu", "", "",
+        "Animation Design", "",
+        "Sida Zhu", "", "",
+        "Artistic Effects", "",
+        "Sida Zhu", "", "",
+        "Chief Programmer", "",
+        "Sida Zhu", "", "",
+        "Market Promotion", "",
+        "Sida Zhu", "", "", "", "",
+        "Special Thanks", "",
+        "Dr. Baruch (Instructor)",
+        "Tianyi Wu (Tester)",
+        "Chang Liu (Tester)",
+    };
+
+    glPushAttrib(GL_CURRENT_BIT);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for(int line = 0; line < thanks.size(); line++)
+    {
+        auto& str = thanks[line];
+        glRasterPos3f(winW / 2.0f - str.size() / 2.0f * 10.0f, endWinMessageScroll + winH / 2.0f - line * 30.0f, -0.5f);
+        for(auto& ch : str) glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+    }
+    glPopAttrib();
+
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glBegin(GL_QUADS);
+        glVertex3f(0.0f, winH, 0.0f);
+        glVertex3f(0.0f, winH - 200.0f, 0.0f);
+        glVertex3f(winW, winH - 200.0f, 0.0f);
+        glVertex3f(winW, winH, 0.0f);
+    glEnd();
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0f, (float)winW / (float)winH, 0.1f, 1000.0f);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    gluLookAt(
+        0.0f, 50.0f, -50.0f,
+        0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f
+    );
+
+    if(endWinMessageScroll < (thanks.size() + 2) * 30.0f)
+        endWinMessageScroll += 0.8f;
+}
+
+void GameEngine::renderEndLose()
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_LIGHTING);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0f, winW, 0.0f, winH, -1.0f, 1.0f);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glEnable(GL_TEXTURE_2D);
+    if(textureLossSpecial) glBindTexture(GL_TEXTURE_2D, textureLossSpecial);
+    glPushMatrix();
+    float imageWidth = 0.8f * winW / 2.0f;
+    float imageHeight = imageWidth / 400.0f * 225.0f;
+    glTranslatef(winW / 2.0f, winH / 1.5f, 0.0f);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(-imageWidth/2.0f, imageHeight/2.0f, -0.5f);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-imageWidth/2.0f, -imageHeight/2.0f, -0.5f);
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(imageWidth/2.0f, -imageHeight/2.0f, -0.5f);
+        glTexCoord2f(1.0f, 1.0f); glVertex3f(imageWidth/2.0f, imageHeight/2.0f, -0.5f);
+    glEnd();
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    std::string message = "You Loss!";
+    glPushMatrix();
+    glTranslatef(winW / 2.0f - message.size() / 2.0f * 60.0f, 100.0f, 0.5f);
+    glScalef(0.6f, 0.6f, 1.0f);
+    glLineWidth(2.0f);
+    glPushAttrib(GL_CURRENT_BIT);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for(char& ch : message) glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, ch);
+    glPopAttrib();
+    glPopMatrix();
 }

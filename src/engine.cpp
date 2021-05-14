@@ -17,6 +17,7 @@ GameEngine::GameEngine()
     camera = new Camera(); // init camera object
     audioEngine = irrklang::createIrrKlangDevice(); // init irrklang audio engine
     balloons = new ParticleBalloon(); // load balloon manager
+    textureLossSpecial = 0;
 }
 
 GameEngine::~GameEngine()
@@ -25,6 +26,7 @@ GameEngine::~GameEngine()
     if(balloons) delete balloons;
     for(auto& data : fireworks) delete data;
     for(auto& pair : textures) if(pair.second) glDeleteTextures(1, &pair.second);
+    if(textureLossSpecial) glDeleteTextures(1, &textureLossSpecial);
     if(musicBackground) musicBackground->drop();
     if(audioEngine) audioEngine->drop();
 }
@@ -100,13 +102,10 @@ void GameEngine::setup()
 
     // setup game states
     state = GameState::BEGINNING;
-    gameStateTimeout = 2 * fps;
+    gameStateTimeout = 1 * fps;
     gameGuide = "Welcome to Balloon Shooter!";
     balloons->loadBalloonsBegin();
     score = 0;
-    // balloons->loadBalloonsTest();
-    // state = GameState::STAGE3;
-    // balloons->loadBalloonsStage3();
 
     srand(time(0));
 }
@@ -293,10 +292,17 @@ void GameEngine::updateLogics(int frameNum)
             default: break;
         }
     }
-    // TODO: if score is negative
-    if(score < 0)
+    // if score is negative
+    if(score < 0 && state < GameState::LOSS)
     {
-        
+        state = GameState::LOSS;
+        enterEndLose();
+    }
+    if(state == GameState::WIN && fireworks.size() <= 0)
+    {
+        fireworks.push_back(new Firework(
+            200, 3 * fps, 50.0f, glm::vec3(0.0f, 10.0f, 0.0f)
+        ));
     }
 }
 
@@ -316,15 +322,25 @@ void GameEngine::renderGame()
     );
 
     // render every objects
-    renderEnv();
-    renderGun();
-    renderBullets();
-    renderBalloons();
-    renderFireworks();
+    if(state < GameState::LOSS)
+    {
+        renderEnv();
+        renderGun();
+        renderBullets();
+        renderBalloons();
+        renderFireworks();
+    }
+    else if(state == GameState::WIN) 
+    {
+        renderEndWin();
+        renderFireworks();
+    }
+    else if(state == GameState::LOSS) renderEndLose();
 }
 
 void GameEngine::renderInterface()
 {
+    if(state >= GameState::LOSS) return;
     glDisable(GL_LIGHTING);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -490,6 +506,12 @@ void GameEngine::handleKeyboard(unsigned char key)
 void GameEngine::handleMouseClick(bool isDown, bool isLeft)
 {
     if(!viewControl) return;
+    if(state >= GameState::LOSS)
+    {
+        viewControl = false;
+        exitViewControl();
+        return;
+    }
     if(isLeft && isDown && gunUpDegree.data > gunUpDegree.end / 3.0f) return; // at this point, the gun is not ready to shoot
     if(isLeft && isDown)
     {
@@ -518,6 +540,7 @@ void GameEngine::handleMouseClick(bool isDown, bool isLeft)
             // addHelpMessage("Ray Hit", 2 * fps);
             bullets.addBullet(newPos, 20 * fps);
         }
+        totalShots += 1;
     }
     if(!isLeft)
     {
@@ -554,6 +577,8 @@ void GameEngine::addHelpMessage(const std::string message, int timeout)
 
 void GameEngine::loadTextures()
 {
+    stbi_set_flip_vertically_on_load(true);
+
     int width, height, channels;
     unsigned char* data;
     for(auto& pair : textures)
@@ -579,4 +604,39 @@ void GameEngine::loadTextures()
             std::cout << "stb_image error: " << stbi_failure_reason() << std::endl;
         }
     }
+    // load loss special image
+    data = stbi_load("assets/Dancing_Pallbearers.jpg", &width, &height, &channels, STBI_rgb);
+    if(data)
+    {
+        glGenTextures(1, &textureLossSpecial);
+        glBindTexture(GL_TEXTURE_2D, textureLossSpecial);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        stbi_image_free(data);
+    }
+    else
+    {
+        addHelpMessage("Failed to load image: assets/Dancing_Pallbearers.jpg", 5 * fps);
+        std::cout << "Failed to load image: assets/Dancing_Pallbearers.jpg" << std::endl;
+        std::cout << "stb_image error: " << stbi_failure_reason() << std::endl;
+    }
+}
+
+void GameEngine::enterEndWin()
+{
+    if(audioEngine) audioEngine->play2D("assets/Nutcracker_Chinese_Dance.mp3");
+    if(musicBackground) musicBackground->stop();
+    fireworks.push_back(new Firework(
+        200, 3 * fps, 50.0f, glm::vec3(0.0f, 10.0f, 0.0f)
+    ));
+}
+
+void GameEngine::enterEndLose()
+{
+    if(audioEngine) audioEngine->play2D("assets/astronomia_special.mp3");
+    if(musicBackground) musicBackground->stop();
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
