@@ -50,3 +50,26 @@ Then go into the auto generated folder `bin` and run the executable `balloon`
 * particle system  
 * audio  
 * transparency  
+
+
+------
+
+### Gallery  
+
+First View  
+![First View](gallery/pic_begin.png)  
+
+Various Gun Skins  
+![Various Gun Skins](gallery/pic_gun_skins.png)
+
+Bullets On The Wall  
+![Bullets On The Wall](gallery/pic_bullets.png)
+
+Boucing Balloons  
+![Boucing Balloons](gallery/pic_bouncing_balls.png)
+
+You Win! (fireworks at the background)  
+![You Win!](gallery/pic_win.png)
+
+You Loss!  
+![You Loss!](gallery/pic_loss.png)
