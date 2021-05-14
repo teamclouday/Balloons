@@ -149,7 +149,7 @@ int custom_rand_color()
 void ParticleBalloon::loadBalloonsStage2()
 {
     // load balloons on every wall
-    // ask player to shoot the RED ones
+    // ask player to shoot the GREEN ones
     balloons.clear();
     balloons.resize(0);
     enablePhysics = false;
@@ -204,7 +204,7 @@ void ParticleBalloon::loadBalloonsStage2()
 void ParticleBalloon::loadBalloonsStage3()
 {
     // appears everywhere
-    const int num = 40;
+    const int num = 25;
     balloons.clear();
     balloons.resize(0);
     enablePhysics = true;
@@ -241,7 +241,7 @@ void ParticleBalloon::loadBalloonsStage3()
 void ParticleBalloon::loadBalloonsStage4()
 {
     // appears everywhere
-    const int num = 100;
+    const int num = 60;
     balloons.clear();
     balloons.resize(0);
     enablePhysics = true;
@@ -253,7 +253,7 @@ void ParticleBalloon::loadBalloonsStage4()
     const float wallWidth = 500.0f;
     float wallAngle = 360.0f / wallSides;
     float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
-    wallDist *= 0.8f;
+    wallDist *= 0.6f;
     for(int i = 0; i < num; i++)
     {
         balloons.push_back({
@@ -301,7 +301,7 @@ std::vector<glm::vec3> loadWallPoints()
     const float wallWidth = 500.0f;
     float wallAngle = 360.0f / wallSides;
     float wallDist = wallWidth / 2.0f * 1.0f / std::tan(glm::radians(wallAngle / 2.0f));
-    wallDist * 0.9f;
+    wallDist *= 0.8f;
     std::vector<glm::vec3> p;
     for(int i = 0; i < wallSides; i++)
     {
@@ -340,11 +340,11 @@ void ParticleBalloon::update(int fps)
         for(size_t wall = 0; wall < wallNormals.size(); wall++)
         {
             // reference: https://mathinsight.org/distance_point_plane
-            auto& p1 = wallPoints[wall*2];
+            auto& p1 = wallPoints[wall];
             auto& p2 = b1.pos;
             auto& n = wallNormals[wall];
             float D = -glm::dot(n, p1);
-            float d = std::abs(D + glm::dot(n, p2)); // length of normal is set to 1
+            float d = D + glm::dot(n, p2); // length of normal is set to 1
             if(d <= b1.radius) b1.vel = glm::reflect(b1.vel, n) * bounceCoeff;
         }
         // consider bouncing with other balloons

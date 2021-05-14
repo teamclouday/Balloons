@@ -71,7 +71,7 @@ void GameEngine::setup()
     camera->worldUP = glm::vec3(0.0f, 1.0f, 0.0f);
     camera->pitch = 0.0f;
     camera->yaw = -90.0f;
-    camera->rotVel = 1.0f / fps * 3.0f;
+    camera->rotVel = 1.0f / fps * 2.0f;
     camera->update();
 
     // setup starting help messages
@@ -102,11 +102,11 @@ void GameEngine::setup()
     state = GameState::BEGINNING;
     gameStateTimeout = 2 * fps;
     gameGuide = "Welcome to Balloon Shooter!";
-    // balloons->loadBalloonsBegin();
+    balloons->loadBalloonsBegin();
     score = 0;
     // balloons->loadBalloonsTest();
-    state = GameState::STAGE3;
-    balloons->loadBalloonsStage3();
+    // state = GameState::STAGE3;
+    // balloons->loadBalloonsStage3();
 
     srand(time(0));
 }
@@ -280,14 +280,14 @@ void GameEngine::updateLogics(int frameNum)
             {
                 state = GameState::STAGE2;
                 balloons->loadBalloonsStage2();
-                gameGuide = "#2 Shoot all RED balloons!";
+                gameGuide = "#2 Shoot all GREEN balloons!";
                 break;
             }
             case GameState::STAGE3:
             {
                 state = GameState::STAGE4;
                 balloons->loadBalloonsStage4();
-                gameGuide = "#4 Shoot all RED balloons in the sky!";
+                gameGuide = "#4 Shoot all GREEN balloons in the sky!";
                 break;
             }
             default: break;
@@ -529,7 +529,7 @@ void GameEngine::handleMouseClick(bool isDown, bool isLeft)
             {
                 state = GameState::BEGINNING_SCORE;
                 gameGuide = "Your score is on the upper right screen";
-                gameStateTimeout = 3 * fps;
+                gameStateTimeout = 1 * fps;
             }
         }
         else

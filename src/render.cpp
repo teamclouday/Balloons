@@ -349,7 +349,7 @@ bool GameEngine::raycast(const glm::vec3& origin, const glm::vec3& dir, float& t
             }
             case GameState::STAGE2:
             {
-                if(toExplode->color == ParticleBalloon::BallonColor::RED)
+                if(toExplode->color == ParticleBalloon::BallonColor::GREEN)
                 {
                     score++;
                     checkRest = true;
@@ -387,7 +387,7 @@ bool GameEngine::raycast(const glm::vec3& origin, const glm::vec3& dir, float& t
             int count = 0;
             for(auto iter = balloons->balloons.begin(); iter != balloons->balloons.end(); iter++)
             {
-                if(iter->color == ParticleBalloon::BallonColor::RED) count++;
+                if(iter->color == ParticleBalloon::BallonColor::GREEN) count++;
             }
             if(count <= 0)
             {
