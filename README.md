@@ -65,6 +65,9 @@ Various Gun Skins
 Bullets On The Wall  
 ![Bullets On The Wall](gallery/pic_bullets.png)
 
+Fireworks When Balloons Shot  
+![Fireworks When Balloons Shot](gallery/pic_firework.png)
+
 Boucing Balloons  
 ![Boucing Balloons](gallery/pic_bouncing_balls.png)
 
